@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>绑定</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/updown.js"></script>
+    <script src="asset/js/lazyimg.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style type="text/css">
+    body {
+        background: #fff;
+    }
+    
+    .weui-search-bar {
+        z-index: 999;
+        background-color: #f3f3f3;
+    }
+    
+    .weui-media-skip {
+        display: block;
+    }
+    
+    .weui-media-box {
+        padding: 15px 15px 0px;
+    }
+    
+    .weui-media-box__desc {
+        margin-bottom: 4px;
+    }
+    
+    .weui-loadmore_line .weui-loadmore__tips {
+        background-color: transparent;
+    }
+    
+    .weui-media-box__title {
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 15px;
+        padding-bottom: 6px;
+        line-height: 25px;
+    }
+    
+    .weui-loadmore {
+        margin-bottom: 65px;
+    }
+    
+    .placeholder {
+        margin: 5px;
+        padding: 0 10px;
+        /*background-color: #ebebeb;*/
+        height: 2.3em;
+        line-height: 2.3em;
+        text-align: center;
+        color: #000;
+    }
+    
+    h1 {
+        background: #e66629;
+        line-height: 37px;
+        font-size: 20px;
+        text-align: center;
+        color: #fff;
+    }
+    #btn_verifycode {
+        color:#000;
+    }
+    </style>
+</head>
+
+<body>
+    <h1 class="shopname" id="shopname">-</h1>
+    <p style="padding-left:15px;line-height:30px;color:#aaa;">
+        <span id="invitor">BOSS</span>邀请您绑定账号
+    </p>
+    <div class="weui-cells weui-cells_form">
+        <!-- <div class="weui-cells__title">基本信息</div> -->
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">姓名</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入姓名" id="name">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">手机号</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" placeholder="请输入手机号" id="mobile" pattern="[0-9]*">
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode">
+            <div class="bt-cell__hd" style="width:105px;">
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" placeholder="短信验证码" id="verifycode">
+            </div>
+            <div class="weui-cell__ft" style="background-color:#e5e5e5;margin-right:15px;">
+                <button class="weui-vcode-btn" id="btn_verifycode">获取验证码</button>
+            </div>
+        </div>
+    </div>
+    <div class="weui-btn-area">
+        <a class="weui-btn weui-btn_primary" href="javascript:" id="btn_confirm" style="color:#fff;">绑定</a>
+    </div>
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script type="text/javascript">
+    var curUrl = parseURL(window.location.href);
+    var shopid = !!curUrl.params.shopid ? curUrl.params.shopid.trim() : '';
+    var src_wxno = !!curUrl.params.src_wxno ? curUrl.params.src_wxno.trim() : '';
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+
+    if (!!curWxNo) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+        sessionStorage.setItem("wxname", src_wxno);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+        src_wxno = !!sessionStorage.getItem("src_wxno") ? sessionStorage.getItem("src_wxno").trim() : '';
+
+        // double check
+        if (!curWxNo) {
+            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        }
+    }
+
+    (function() {
+        if (shopid < 1 || !src_wxno) {
+            $.toptip('非法访问', 'error');
+            return;
+        }
+
+        var act = appServer + '/bind/getinfo';
+        $.ajax({
+            url: act,
+            type: 'get',
+            cache: false,
+            data: {
+                'wxno': curWxNo,
+                'shopid': shopid,
+                'src_wxno': src_wxno
+            },
+            success: function(resp) {
+                if (resp.respcode == '00') {
+                    $('#shopname').text(resp.shopname);
+                    !!resp.srcname ? $('#invitor').text(resp.srcname) : '';
+                } else {
+                    $.toptip(resp.respmsg, 'error');
+                }
+            },
+            error: function() {
+                $.toptip('网络连接失败', 'error');
+            }
+        });
+
+    })();
+
+    function timer(btn, time) {
+        btn.attr("disabled", true); //按钮禁止点击
+        btn.val(time <= 0 ? "获取验证码" : ("" + (time) + "秒后可发送"));
+        var hander = setInterval(function() {
+            if (time <= 0) {
+                clearInterval(hander); //清除倒计时
+                btn.html("获取验证码");
+                btn.prop("disabled", false);
+                return false;
+            } else {
+                btn.html("" + (time--) + "秒后可发送");
+            }
+        }, 1000);
+    }
+
+
+    // 短信验证码
+    $("#btn_verifycode").click(function() {
+        var mobile = $("#mobile").val();
+        if (!mobile) {
+            $.toptip('请填写手机号', 'error');
+            return;
+        }
+
+        if (!/^1[3|4|5|7|8]\d{9}$/.test(mobile)) {
+            $.toptip('请填写正确的手机号', 'error');
+            return false;
+        }
+
+        timer($("#btn_verifycode"), 10)
+        // return false;
+        var act = appServer + '/smsverify/sendverifycode';
+        $.ajax({
+            url: act,
+            type: "post",
+            traditional: true,
+            data: {
+                "veritype": "0",
+                "mobile": mobile
+            },
+            beforeSend: function() {
+                $("#btn_verifycode").attr('disabled', true).text('正在提交');
+            },
+            success: function(resp) {
+                $("#btn_verifycode").removeAttr('disabled').text('获取验证码');
+                if (resp.respcode == '00') {
+                    $.toptip('验证码已发送', 'success');
+                } else {
+                    $.toptip(resp.respmsg, 'error');
+                }
+            },
+            error: function() {
+                $("#btn_verifycode").removeAttr('disabled').text('获取验证码');
+                $.toptip('网络连接失败', 'error');
+            }
+        })
+    })
+
+    $("#btn_confirm").click(function(e) {
+        e.preventDefault();
+
+        var name = $("#name").val();
+        var mobile = $("#mobile").val();
+        var verifycode = $("#verifycode").val();
+
+        if (!name) {
+            $.toptip('请填写姓名，不能为空！', 'error');
+            return false;
+        }
+
+        if (!mobile) {
+            $.toptip('请填写手机号，不能为空！', 'error');
+            return false;
+        }
+        
+        if (!/^1[3|4|5|7|8]\d{9}$/.test(mobile)) {
+            $.toptip('请填写正确的手机号', 'error');
+            return false;
+        }
+
+        var act = appServer + '/bind/confirm';
+        $.ajax({
+            url: act,
+            type: "post",
+            traditional: true,
+            data: {
+                "shopid": shopid,
+                "src_wxno": src_wxno,
+                "wxno": curWxNo,
+                "wxname": curWxName,
+                "name": name,
+                "mobile": mobile,
+                "verifycode": verifycode
+            },
+            beforeSend: function() {
+                $("#btn_confirm").attr('disabled', true).text('正在提交');
+            },
+            success: function(resp) {
+                $("#btn_confirm").removeAttr('disabled').text('绑定');
+                if (resp.respcode == '00') {
+                    $.toptip('信息绑定成功', 'success');
+                } else {
+                    $.toptip(resp.respmsg, 'error');
+                    return false;
+                }
+            },
+            error: function() {
+                $("#btn_confirm").removeAttr('disabled').text('绑定');
+                $.toptip('网络连接失败', 'error');
+            }
+        })
+
+    })
+    </script>
+</body>
+
+</html>

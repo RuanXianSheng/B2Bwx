@@ -1,0 +1,164 @@
+/* ============================================================
+   公共样式
+   ============================================================ */
+body,p,ul,ol,li,dl,dt,dd,h1,h2,h3,h4,h5,h6,fieldset,legend,input,select,textarea,button,th,td,img{margin:0;padding:0;}
+/*body{color:#222222;font:16px "STHeiti","Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif;word-wrap:break-word;word-break:normal;}*/
+body{color:#222222;font:16px "Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif;word-wrap:break-word;word-break:normal;}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:400;}
+ul,ol,li{list-style:none;}
+img,fieldset{border:none;}
+i,em{font-style:normal;}
+table{border-collapse:collapse;border-spacing:0;table-layout:fixed;empty-cells:hide;word-break:break-all;word-wrap:break-word;}
+
+* {margin:0;padding:0}
+body a:link{text-decoration:none;color:#484848;}
+body a:visited {text-decoration:none;color:#484848;}
+body {
+	background-color:#f6f1eb;
+
+}
+.clearfix:after {
+    content:"";
+    display:block;
+    height:0;
+    font-size:0;
+    clear:both;
+    visibility:hidden;      
+}
+.clearfix {
+    zoom:1;
+}
+
+/*底部导航样式*/
+.lanse-color {
+	color:#0993c7 !important;
+}
+.weui-tabbar__item.weui-bar__item--on .weui-tabbar__label {
+	color:#0993c7;
+}
+
+
+/*筛选样式*/
+.bt-screen {
+  float: right;
+  color: #fff;
+  display: flex;
+  display: -webkit-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  padding-right:10px;
+}
+/*.font1d1 {
+  margin:0;
+  position:fixed;
+  top:0;
+  width:100%;
+  background-color:#000;
+  opacity:0.5;
+  z-index:2;
+  line-height:2.5em;
+  padding-left:0px;
+}*/
+
+/*公共颜色样式*/
+.red-color {
+  color: #d07e42 !important;
+}
+
+.cyan-color {
+  color: #34c1db !important;
+}
+
+/*表格底部边框*/
+.weui-cell:before {
+  border-top:none;
+}
+.weui-tabbar {
+  z-index: auto;
+  position: fixed;
+  right: 0;
+  left: 0;
+  padding-bottom: 6px;
+}
+.weui-popup__modal.bt-filtrate__modal {
+  width:80%;
+  right:0;
+}
+
+/*模块之间的间隙*/
+.weui-cells {
+  margin-top:0px;
+  padding:10px 0px;
+  font-size:15px;
+}
+
+
+/*查询确定按钮颜色*/
+.weui-btn_primary_blue {
+  background-color:#7eaceb;
+}
+.content-padded {
+  padding:10px 15px;
+}
+
+/*数据样式*/
+#datalist {
+  margin-bottom:65px;
+  position:relative;
+}
+#time {
+  position:absolute;
+  top:-1.8em;
+  width:93%;
+}
+/*筛选页面从右侧滑出样式*/
+.weui-popup__modal.bt-filtrate__modal {
+  /*width: 55%;*/
+  -webkit-transform: translate3d(100%, 0, 0);
+  transform: translate3d(100%, 0, 0);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bt-filtrate .weui-popup__overlay {
+  opacity: 1;
+}
+.weui-popup__container--visible .weui-popup__modal.bt-filtrate__modal {
+  opacity: 1;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.bt-filtrate__container {
+  position: relative;
+  flex: 1;
+  /*height: 100%;*/
+  overflow-y: auto;
+}
+
+.weui-cell__ft {
+  color:#000;
+}
+
+.weui-btn_default {
+  background-color:#f6f1eb;
+}
+/*查询按钮border*/
+.weui-btn:after {
+  border:none;
+}
+
+/*返回顶部样式*/
+#totop {
+  position:fixed;
+  bottom:75px;
+  right:5px;
+  display:none;
+}
+
+.weui-cells__title {
+  font-size:15px;
+}
+.weui-cells:after {
+	border-bottom:none;
+}

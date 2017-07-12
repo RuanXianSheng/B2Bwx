@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>人员详情</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/dist/fonts/demos.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style type="text/css">
+    .weui-search-bar {
+        z-index: 999;
+        background-color: #f3f3f3;
+    }
+    
+    .weui-media-skip {
+        display: block;
+    }
+    
+    .weui-media-box {
+        padding: 15px 15px 0px;
+    }
+    
+    .weui-media-box__desc {
+        margin-bottom: 4px;
+    }
+    
+    .weui-loadmore_line .weui-loadmore__tips {
+        background-color: transparent;
+    }
+    
+    .weui-media-box__title {
+        word-wrap: break-word;
+        white-space: normal;
+        font-size: 15px;
+        padding-bottom: 6px;
+        line-height: 25px;
+    }
+    
+    .weui-loadmore {
+        margin-bottom: 65px;
+    }
+    
+    .placeholder {
+        margin: 5px;
+        padding: 0 10px;
+        /*background-color: #ebebeb;*/
+        height: 2.3em;
+        line-height: 2.3em;
+        text-align: center;
+        color: #000;
+    }
+    
+    .weui-cells__title {
+        font-size: 17px;
+    }
+    
+    .shanchu {
+        float: right;
+        margin-right: 15px;
+    }
+    
+    .icon-shanchu1 {
+        color: #fff;
+        font-size: 18px;
+        /*padding-bottom:5px;*/
+    }
+    
+    h1 {
+        background: #e66629;
+        line-height: 37px;
+        text-align: center;
+        position: relative;
+        font-size: 20px;
+        color: #fff;
+    }
+    
+    h1 .icon-fanhui {
+        margin-left: 15px;
+        color: #fff;
+        float: left;
+    }
+    
+    .weui-cell {
+        background: #fff;
+    }
+    
+    .weui-cells {
+        background-color: transparent;
+        padding: 0px;
+    }
+    
+    .demos-content-padded {
+        background: #fff;
+    }
+    </style>
+</head>
+
+<body>
+    <h1 class="clearfix">
+        <a onclick="javascript:window.history.go(-1);">
+            <i class="icon iconfont icon-fanhui"></i>
+        </a>人员详情
+        <!-- <span class="shanchu">
+            <i class="icon iconfont icon-shanchu1" id="deluser-confirm"></i>
+        </span> -->
+    </h1>
+    <div style="margin-top:4px;" class="bodycont">
+        <div class="weui-cells" id="cont">
+            <div class="weui-cell weui-cell_select weui-cell_select-after" style="margin-bottom:5px;">
+                <div class="weui-cell__hd">
+                    <label class="weui-label" id="user_name"></label>
+                </div>
+                <div class="weui-cell__bd" style="text-align:right;">
+                    <select class="weui-select" name="sel_role" style="width:70px;" id="user_role" disabled>
+                        <option value="1">老板</option>
+                        <option value="2">店长</option>
+                        <option value="3">店员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="weui-cell secon">
+                <div class="weui-cell__bd">
+                    <p>加入时间</p>
+                </div>
+                <div class="weui-cell__ft" id="createdt"></div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>联系方式</p>
+                </div>
+                <div class="weui-cell__ft mobile" id="mobile"></div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__bd">
+                    <p>接收消息提醒</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <label for="notify_flag" class="weui-switch-cp">
+                        <input id="notify_flag" class="weui-switch-cp__input" type="checkbox">
+                        <div class="weui-switch-cp__box"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class='demos-content-padded'>
+            <a class="weui-btn weui-btn_primary" style="color:#fff;" id="btnsave">保存</a>
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a class="weui-tabbar__item" href="merchant.html">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-shanghuguanli"></i></div>
+            <p class="weui-tabbar__label">商铺信息</p>
+        </a>
+        <a class="weui-tabbar__item weui-bar__item--on">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-gerenxinxi lanse-color"></i></div>
+            <p class="weui-tabbar__label ">个人设置</p>
+        </a>
+        <a class="weui-tabbar__item" id="admin_page" href="admin.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-guanli "></i></div>
+            <p class="weui-tabbar__label">人员管理</p>
+        </a>
+        <a class="weui-tabbar__item" id="pwd_page" href="changepwd.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-xiugai"></i></div>
+            <p class="weui-tabbar__label ">修改密码</p>
+        </a>
+    </div>
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    var curUrl = parseURL(window.location.href);
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
+    // && !!curRole && !!curRole.trim()
+
+    if (!!curWxNo && !!curRole) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+        sessionStorage.setItem("role", curRole);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+        // double check
+        if (!curWxNo || !curRole) {
+            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        }
+    }
+
+    curRole == 'b' ? $('#admin_page').css('display', 'block') : '';
+    curRole == 'a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block') : '';
+
+    // 获取数据
+    (function() {
+        var name = '';
+        var mobile = '';
+        var createdt = '';
+        var notify_flag = '';
+        var user_role = '';
+        
+        var act = appServer + '/personal';
+        $.ajax({
+            url: act,
+            type: 'get',
+            cache: false,
+            data: {
+                'wxno': curWxNo
+            },
+            success: function(resp) {
+                if (resp.respcode == '00') {
+                    name =resp.name;
+                    mobile = resp.mobile;
+                    createdt = resp.createdt;
+                    notify_flag = resp.notify_flag;
+                    user_role = resp.user_role;
+                }else{
+                    $.toptip(resp.respmsg, 'error');
+                }
+            
+                $('#user_name').text(name);
+                $('#user_role').val(user_role);
+                $('#createdt').text(createdt);
+                $('#mobile').text(mobile);
+                notify_flag == 1 ? $('#notify_flag').attr('checked', 'checked') : '';
+            },
+            error: function() {
+                $.toptip('网络连接失败', 'error');
+            }
+        });
+    })();
+
+    notify_flag == 1 ? $('#notify_flag').attr('checked', 'checked') : '';
+
+    // 点击保存
+    $("#btnsave").click(function(e) {
+        e.preventDefault();
+  
+        // 开关
+        var news = $("#notify_flag").prop('checked');
+        notify = news ? 1 : 0;
+
+        // 联系方式
+        var act = appServer + '/personal/setinfo';
+        $.ajax({
+            url: act,
+            type: "post",
+            traditional: true,
+            cache: false,
+            data: {
+                "wxno": curWxNo,
+                "wxname": curWxName,
+                "notify": notify
+            },
+            beforeSend: function() {
+                $('#btnsave').attr('disabled', true).text('正在提交');
+            },
+            success: function(resp) {
+                $('#btnsave').removeAttr('disabled').text('保存');
+                if (resp.respcode == '00') {
+                    $.toptip('保存成功', 'success');
+                } else {
+                    $.toptip('保存失败', 'error');
+
+                }
+            },
+            error: function() {
+                $.toptip('网络连接失败', 'error');
+                $("#btnsave").removeAttr('disabled').text('登录');
+            }
+        })
+    })
+
+    // 回到顶部
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > 40) {
+            $("#totop").css("display", "block");
+        } else {
+            $("#totop").css("display", "none");
+        }
+    });
+    $("#totop").click(function() {
+        $("body").scrollTop(0);
+    })
+    </script>
+</body>
+
+</html>

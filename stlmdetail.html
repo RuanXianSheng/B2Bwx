@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>清算明细</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/css/today.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/common.js"></script>
+</head>
+	<style type="text/css">
+	.weui-form-preview__hd .weui-form-preview__value {
+  	font-style: normal;
+  	font-size: 1.0em;
+  }
+  .weui-form-preview__item {
+    padding:2px 0px;
+  }
+  .weui-form-preview__bd , .weui-form-preview__label{
+    color:#000;
+  }
+  .weui-form-preview {
+    margin-bottom:0.3em;
+  }
+  .weui-form-preview {
+    background-color:#f6f1eb;
+    margin-bottom:65px;
+    padding-top:47px;
+  }
+  .weui-form-preview__ft .cheng {
+    margin-bottom:0.4em;
+    background-color:#fff;
+    width:100%;
+    text-align:center;
+  }
+  .weui-form-preview__bd {
+    background-color:#fff;
+  }
+  .toubu {
+    line-height:37px;
+  }
+  .icon-fanhui {
+    padding-left:15px;
+  }
+  .weui-form-preview__ft {
+    line-height:40px;
+  }
+	</style>
+	<body>
+	<div class="weui-form-preview">
+    <div class="weui-form-preview__ft toubu" style="margin-bottom:4px;background:#fff;position:fixed;top:0;left:0;width:100%;z-index:10;">
+        <a href="stlm.html">
+            <i class="icon iconfont icon-fanhui"></i>
+        </a>
+        <div style="width:100%;text-align:center;">
+          <span style="color:#0bb20c;">清算明细</span>
+        </div>
+    </div>
+
+  </div>
+  <div class="weui-tabbar">
+    <a href="today.html" class="weui-tabbar__item">
+        <div class="weui-tabbar__icon">
+            <i class="icon iconfont icon-jiaoyi"></i>
+        </div>
+        <p class="weui-tabbar__label">当日交易</p>
+    </a>
+    <a href="trade.html" class="weui-tabbar__item">
+        <div class="weui-tabbar__icon lanse-color">
+            <i class="icon iconfont icon-lishi"></i>
+        </div>
+        <p class="weui-tabbar__label ">历史交易</p>
+    </a>
+    <a href="stlm.html" class="weui-tabbar__item weui-bar__item--on">
+        <div class="weui-tabbar__icon">
+            <i class="icon iconfont icon-chaxun lanse-color"></i>
+        </div>
+        <p class="weui-tabbar__label">清算查询</p>
+    </a>
+  </div>
+  <div id="totop"><img src="asset/images/totop.png"></div>
+  <script src="asset/dist/lib/fastclick.js"></script>
+  <script src="asset/dist/js/jquery-weui.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    //下拉刷新
+    $(".details").pullToRefresh().on('pull-to-refresh', function(done) {
+        var self = this;
+        setTimeout(function() {
+            $.alert("已经没有更多了");
+            $(self).pullToRefreshDone();
+        }, 1000)
+    });
+    var curUrl = parseURL(window.location.href);
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+
+    if (!!curWxNo) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+      var shopid = getRequests("shopid") ? getRequests("shopid")[0] : "";
+      var stlmdate = getRequests("stlmdate") ? getRequests("stlmdate")[0] : "";
+    }
+
+        function querytoday() {
+          var act = appServer + '/stlm/detail';
+          $.ajax({
+              type: 'GET',
+              url: act,
+              data: {
+                  "wxno":curWxNo,
+                  "shopid":shopid,
+                  "stlmdate":stlmdate
+              },
+              cache: false,
+              success: function(resp) {
+                if (resp.respcode == '00') {
+                  var html = '';
+                  for (var i = 0; i < resp.record_count; i++) {
+
+                      html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '终端名称' + 
+                          '</label><span class="weui-form-preview__value">' + resp.data[i].termnick + '</span></div>';
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易类型' + '</label><span class="weui-form-preview__value">' + resp.data[i].tradetype + '</span></div>';
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易时间' + '</label><span class="weui-form-preview__value">' + resp.data[i].pepdatetime + '</span></div>';
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易金额' + '</label><span class="weui-form-preview__value" style="color:blue;">' + resp.data[i].realamount + '</span></div>';
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '转出卡号' + '</label><span class="weui-form-preview__value">' + resp.data[i].outcdno + '</span></div>';
+                          // href="merchantdetail.html"
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '手续费' + '</label><span class="weui-form-preview__value">' + resp.data[i].tradefee + '</span></div>';
+                      html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '结算金额' + '</label><span class="weui-form-preview__value">' + resp.data[i].realamount + '</span></div></div></div>';
+                      // resp.data.terms[i].state
+                      html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon"><i class="weui-icon-success weui-icon_msg" style="color:#09bb07;margin-right:18px;"></i></div><span style="color:#0bb20c;">' + '成功' + '</span></a></div>';
+                  }
+                  $(".weui-form-preview").append(html);
+                }else {
+                    $.toptip(resp.respmsg, 'error');
+                    return false;
+                }
+            },
+            error: function() {
+                $.toptip('网络连接失败', 'error');
+            }
+        });
+      };
+        querytoday();
+
+    // 回到顶部
+    $(window).scroll(function(){ 
+        if ($(window).scrollTop()>40){ 
+            $("#totop").css("display","block"); 
+        }else {
+            $("#totop").css("display","none"); 
+        }
+    });
+    
+    $("#totop").click(function(){
+        $("body").scrollTop(0);
+    })
+    </script>
+    
+
+	</body>
+</html>

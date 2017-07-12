@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>清算查询</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/css/today.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/updown.js"></script>
+    <script src="asset/js/lazyimg.js"></script>
+    <script src="asset/js/common.js"></script>
+</head>
+<style>
+.weui-cells__title+.weui-cells {
+    margin-top: 6px;
+}
+#datalist .weui-cell {
+    padding:6px 15px;
+}
+#trade_time .weui-label {
+    width: 50px;
+}
+.shijian {
+    background: #fff;
+    line-height: 20px;
+    text-align: center;
+    position:relative;
+    font-size:0.8em;
+    color:#5b5b5b;
+}
+.weui-cells {
+    margin-bottom:4px;
+}
+.tongji {
+    display:none;
+}
+#a,#b,#c,#d,#e {
+    height:25px;
+}
+</style>
+
+<body>
+    <div class="contentt">
+        <!--时间查询-->
+        <div class="weui-cells__title weui-flex-right on font1d1 text-right">
+            <a href="javascript:" class="bt-screen open-popup" data-target="#filtrate" style="color:#fff;">
+                        筛选<i class="icon iconfont icon-shaixuan"></i></a>
+        </div>
+        <div class="shijian" style="margin-top:42px;"><span id="begin"></span> 到<span id="end"></span></div>
+        <div class="weui-flex">
+            <div class="weui-flex__item weui-flex__sty"><span class="huise-color">交易总笔数</span><span class="red-color" id="a"></span></div>
+            <div class="weui-flex__item weui-flex__sty"><span class="huise-color">消费总金额</span><span class="red-color" id="b"></span></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item weui-flex__sty"><span class="huise-color">手续费总额</span><span class="red-color" id="c"></span></div>
+            <div class="weui-flex__item weui-flex__sty"><span class="huise-color">退货总金额</span><span class="red-color" id="d"></span></div>
+        </div>
+        <div class="weui-flex">
+            <div class="weui-flex__item weui-flex__sty"><span class="huise-color">实收总金额</span><span class="red-color" id="e"></span></div>
+        </div>
+        <div class="page__bd"  id="datalist">
+            <div class="weui-cells__title weui-flex on" id="time">
+                <div class="weui-flex__item">查询时间：<span class="item" id="Launch-time"></span></div>
+                <div class="tongji">共<span id="bishu"></span>笔 ￥<span id="je"></span></div>
+            </div>
+            <div class="weui_panel weui_panel_access" style="margin-bottom:65px;margin-top:1.5em;">
+                <div class="weui_panel_bd">
+                </div>
+            </div>
+        </div>
+        <div id="filtrate" class="weui-popup__container bt-filtrate">
+            <div class="weui-popup__overlay"></div>
+            <div class="weui-popup__modal bt-filtrate__modal">
+                <div class="bt-filtrate__container">
+                    <div class="bt-filtrate__content" id="trade_time">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">交易时间</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_form">
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label for="date" class="weui-label">起始</label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" id="date" type="text" readonly="">
+                                </div>
+                            </div>
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label for="date1" class="weui-label">终止</label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" id="date1" type="text" value="" readonly="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-filtrate__content" id="chosetype">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">选择类型</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_radio">
+                            <label class="weui-cell weui-check__label" for="x11">
+                                <div class="weui-cell__bd">
+                                    <p>终端名称</p>
+                                </div>
+                                <div class="weui-cell__ft">
+                                    <input type="radio" class="weui-check" name="radio1" id="x11" checked="checked">
+                                    <span class="weui-icon-checked"></span>
+                                </div>
+                            </label>
+                            <label class="weui-cell weui-check__label" for="x12">
+                                <div class="weui-cell__bd">
+                                    <p>终端号码</p>
+                                </div>
+                                <div class="weui-cell__ft">
+                                    <input type="radio" name="radio1" class="weui-check" id="x12">
+                                    <span class="weui-icon-checked"></span>
+                                </div>
+                            </label>
+                            <label class="weui-cell weui-check__label" for="x13">
+                                <div class="weui-cell__bd">
+                                    <p>电话号码</p>
+                                </div>
+                                <div class="weui-cell__ft">
+                                    <input type="radio" name="radio1" class="weui-check" id="x13">
+                                    <span class="weui-icon-checked"></span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="weui-cells">
+                            <div class="weui-cell">
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" type="text" placeholder="请输入文本" id="search_value">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-flex"  id="foobtn">
+                    <div class="weui-flex__item">
+                        <a id="reset" class="weui-btn weui-btn_default bt-btn__fixed bt-filtrate__btn">重置</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a id="confirm" class="weui-btn weui-btn_primary_blue bt-btn__fixed bt-filtrate__btn">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a href="today.html" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-jiaoyi"></i>
+            </div>
+            <p class="weui-tabbar__label">当日交易</p>
+        </a>
+        <a href="trade.html" class="weui-tabbar__item" style="display:none;" id="trade_page">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-lishi"></i>
+            </div>
+            <p class="weui-tabbar__label ">历史交易</p>
+        </a>
+        <a class="weui-tabbar__item weui-bar__item--on" style="display:none;" id="stlm_page">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-chaxun lanse-color"></i>
+            </div>
+            <p class="weui-tabbar__label">清算查询</p>
+        </a>
+    </div>
+    <!-- foorer -->
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <div class="totalnum" style="display:none"></div>
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    var curUrl = parseURL(window.location.href);
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
+    // && !!curRole && !!curRole.trim()
+
+    if (!!curWxNo && !!curRole) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+        sessionStorage.setItem("role", curRole);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+        // double check
+        if (!curWxNo || !curRole) {
+            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        }
+    }
+
+    curRole =='b' ? $('#trade_page').css('display', 'block') : '';
+    curRole =='a' ? $('#trade_page').css('display', 'block') && $('#stlm_page').css('display', 'block')  : '';
+
+    if (curRole == 'c') {
+        window.close();
+    }
+
+    // 获取前一天时间
+    var today = new Date();
+    var yesterday_milliseconds = today.getTime() - 1000 * 60 * 60 * 24;
+    var yesterday = new Date();
+    yesterday.setTime(yesterday_milliseconds);
+    var strYear = yesterday.getFullYear(); //2017
+    var strDay = yesterday.getDate(); //15
+    var jstrDay = today.getDate(); //15
+    var strMonth = yesterday.getMonth() + 1; //01
+    mytime = today.toLocaleTimeString();
+    if (strMonth < 10) {
+        strMonth = "0" + strMonth;
+    }
+    if (strDay < 10) {
+        strDay = "0" + strDay;
+    }
+    if (jstrDay < 10) {
+        jstrDay = "0" + jstrDay;
+    }
+    var a = $("#Launch-time");
+    // "查询时间："
+    var t = strYear + "年" + strMonth + "月" + jstrDay + "日" + " " + mytime;
+    a.html(t);
+    //前一天时间
+    var strYesterday = strYear + "-" + strMonth + "-" + strDay;
+
+    var begin_date = getRequests("begin_date") ? getRequests("begin_date")[0] : [];
+    var end_date = getRequests("end_date") ? getRequests("end_date")[0] : [];
+
+    if (getRequests("begin_date")) {
+        $("#begin").html(formatTime (begin_date));
+        $("#end").html(formatTime (end_date));
+    }else {
+        $("#date").val(strYesterday);
+        $("#date1").val(strYesterday);
+        $("#begin").html($("#date").val());
+        $("#end").html($("#date1").val());
+    }
+
+    //获取三十天前日期
+    var lw = new Date(today - 1000 * 60 * 60 * 24 * 91);//最后一个数字30可改，30天的意思
+    var lastY = lw.getFullYear();
+    var lastM = lw.getMonth()+1;
+    var lastD = lw.getDate();
+    var startdate=lastY+"-"+(lastM<10 ? "0" + lastM : lastM)+"-"+(lastD<10 ? "0"+ lastD : lastD);//三十天之前日期
+
+    if (getRequests("begin_date")) {
+        var rq1 = formatTime (begin_date);
+        var rq2 = formatTime (end_date);
+    }else {
+        var rq1 = strYesterday;
+        var rq2 = strYesterday;
+    }
+    $("#date").calendar({
+        value: [rq1],
+        dateFormat: 'yyyy-mm-dd',
+        minDate:startdate,
+        maxDate:strYesterday,
+        closeOnSelect:true  
+    });
+    $("#date1").calendar({
+        value: [rq2],
+        dateFormat: 'yyyy-mm-dd',
+        minDate:startdate,
+        maxDate:strYesterday,
+        closeOnSelect:true   
+    });
+
+    //上拉加载
+    $(".details").pullToRefresh().on('pull-to-refresh', function(done) {
+        var self = this;
+        setTimeout(function() {
+            $.alert("已经没有更多了");
+            $(self).pullToRefreshDone();
+        }, 1000)
+    });
+    //重置
+    $("#reset").click(function() {
+        $(".bt-filtrate__content").each(function() {
+            $(this).find(".weui-check__label").eq(0).find("input").prop('checked', true);
+        });
+        $("#date").val(strYesterday);
+        $("#date1").val(strYesterday);
+    });
+
+
+    lode();
+    //页面初始化
+    function lode() {
+        // 回填信息
+        if (getRequests("search_type")) {
+            var page_num = window.location.href.split("#!page_num=");
+            page_num = page_num.length == 2 ? page_num[1] : 1;
+            var search_type = getRequests("search_type") ? getRequests("search_type")[0] : "";
+            var search_value = getRequests("search_value") ? getRequests("search_value")[0] : "";
+            // 选择类型
+            var nn = $("#chosetype input");
+            nn.eq(search_type).prop("checked", true);
+
+            // search_value
+            $("#search_value").val(unescape(search_value));
+        }
+    }
+        // 筛选类型
+        var list = $("#chosetype .weui-check");
+
+        //页数 
+        var page = 0;
+        // 每页展示10个
+        var size = 10;
+        $('.weui_panel').dropload({
+            scrollArea: window,
+            autoLoad: true, //自动加载
+            domDown: { //上拉
+                domClass: 'dropload-down',
+                domRefresh: '<div class="dropload-refresh f15 "  style="line-height:2em;text-align:center;"><i class="icon icon-20"></i>上拉加载更多</div>',
+                domLoad: '<div class="dropload-load f15"  style="line-height:2em;text-align:center;"><span class="weui-loading"></span>正在加载中...</div>',
+                domNoData: '<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>'
+            },
+            loadDownFn: function(me) { //加载更多
+                if (getRequests("search_type") == undefined) {
+                    var search_type = 0;
+                } else {
+                    var search_type = getRequests("search_type");
+                }
+                var search_value = $("#search_value").val();
+                page++;
+                var begin = (page - 1) * 10 + 1;
+                var end = page * 10;
+
+                // 判断是否加载到了最后一条数据
+                if(begin > $(".totalnum").html() &&　$(".totalnum").html() != "") {
+                    $(".dropload-down").html('<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>');
+                    return false;
+                }
+
+                if (!getRequests("begin_date")) {
+                    var begindate = strYesterday.split("-").join("");
+                    var enddate = strYesterday.split("-").join("");
+                } else {
+                    var begindate = getRequests("begin_date")[0].split("-").join("");
+                    var enddate = getRequests("end_date")[0].split("-").join("");
+
+                    //回填日期
+                    $("#date").val(formatTime (begindate));
+                    $("#date1").val(formatTime (enddate));
+                }
+
+                var len = list.length;
+                for (i = 0; i < len; i++) {
+                    var aa = list[i].checked;
+                    if (aa == true) {
+                        var search_type = i;
+                    }
+                }
+                var search_type = search_type;
+
+                var act = appServer + '/stlm';
+                $.ajax({
+                    type: 'GET',
+                    url: act,
+                    cache: false,
+                    dataType: 'json',
+                    data: {
+                        "wxno": curWxNo,
+                        "begintime":begindate,
+                        "endtime":enddate,
+                        "search_type":search_type,
+                        "search_value":search_value,
+                    },
+                    success: function(resp) {
+                        if (resp.respcode == '00') {
+                            var arrLen = resp.data.length;
+                            if (arrLen >= 0) {
+                                var html = '';
+                                for (var i = 0; i < arrLen; i++) {
+                                    html += '<div class="weui-cells"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '清算时间' + '</p></div><div class="weui-cell__ft">' + resp.data[i].stlmdate + '</div></div>';
+                                    html += '<div class="weui-cell"><div class="weui-cell__bd"><p>' + '终端号' + '</p></div><div class="weui-cell__ft" >' + resp.data[i].termcde + '</div></div>';
+                                    html += '<div class="weui-cell"><div class="weui-cell__bd"><p>' + '笔数' + '</p></div><div class="weui-cell__ft">' + resp.data[i].tradecount + '</div></div>';
+                                    html += '<div class="weui-cell"><div class="weui-cell__bd"><p>' + '消费金额' + '</p></div><div class="weui-cell__ft">' + resp.data[i].tradeamount + '</div></div>';
+                                    html += '<div class="weui-cell"><div class="weui-cell__bd"><p>' + '退货金额' + '</p></div><div class="weui-cell__ft">' + resp.data[i].refundamount + '</div></div></a></div>';
+                                }
+                                $(".totalnum").html(resp.record_count);
+                                if (page == 1) {
+                                    $("#a").html(resp.summary.total_trade_count);
+                                    $("#b").html(resp.summary.total_trade_amount);
+                                    $("#c").html(resp.summary.total_fee_amount);
+                                    $("#d").html(resp.summary.total_refund_amount);
+                                    $("#e").html(resp.summary.total_real_amount);
+                                    $("#bishu").html(resp.summary.total_trade_count);
+                                $("#je").html(resp.summary.total_trade_amount);
+                                }
+                                // 如果没有数据
+                            } else {
+                                // 锁定
+                                me.lock();
+                                // 无数据
+                                me.noData();
+                            }
+
+                                // 为了测试，延迟1秒加载
+                            // setTimeout(function() {
+                                $('.weui_panel_bd').append(html);
+                                $("#datalist .weui_panel_bd .weui-cells").bind("click", fnMyFunc2 = function() {
+                                        var n = $(this).index();
+                                        if (n >= arrLen) {
+                                            n = n%arrLen;
+                                        }
+                                        var arr = "stlmdetail.html?shopid=" + resp.data[n].shopid + "&stlmdate=" + resp.data[n].stlmdate;
+                                        window.location.href = arr;
+                                })
+                                var lazyloadImg = new LazyloadImg({
+                                    el: '.weui-updown [data-img]', //匹配元素
+                                    top: 50, //元素在顶部伸出长度触发加载机制
+                                    right: 50, //元素在右边伸出长度触发加载机制
+                                    bottom: 50, //元素在底部伸出长度触发加载机制
+                                    left: 50, //元素在左边伸出长度触发加载机制
+                                    qriginal: false, // true，自动将图片剪切成默认图片的宽高；false显示图片真实宽高
+                                    load: function(el) {
+                                        el.style.cssText += '-webkit-animation: fadeIn 01s ease 0.2s 1 both;animation: fadeIn 1s ease 0.2s 1 both;';
+                                    },
+                                    error: function(el) {
+
+                                    }
+                                });
+                                // 每次数据加载完，必须重置
+                                me.resetload();
+                            // }, 1000);
+                        }else {
+                            $.toptip(resp.respmsg, 'error');
+                            $(".dropload-down").html('<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>');
+                            return false;
+                        }
+                    },
+                    error: function(xhr, type) {
+                        $.toptip('网络连接失败', 'error');
+                        // 即使加载出错，也得重置
+                        me.resetload();
+                    }
+                });
+
+            
+            }
+        });
+
+        // if (getRequests("search_type") != undefined) {
+        //     $.toast("操作成功");
+        // }
+
+    // 筛选类型
+    var list = $(".weui-check");
+    $("#confirm").bind("click", fnMyFunc1 = function() { //赋给函数变量
+        var len = list.length;
+        for (i = 0; i < len; i++) {
+            var aa = list[i].checked;
+            if (aa == true) {
+                var search_type = i;
+            }
+        }
+        var search_value = escape($("#search_value").val());
+
+        var begindate = $("#date").val().split("-").join("");
+        var enddate = $("#date1").val().split("-").join("");
+
+        var arr = window.location.href.split("?");
+        arr[0] += "?begin_date=" + begindate + "&end_date=" + enddate + "&search_type=" + search_type + "&search_value=" + search_value;
+        window.location.href = arr[0];
+    })
+
+    // 总金额隐藏与显示
+    $(window).scroll(function(){ 
+        if ($(window).scrollTop()>40){ 
+            $("#totop").css("display","block"); 
+        }else {
+            $("#totop").css("display","none"); 
+        }
+        if ($(window).scrollTop() > 217) {
+            $("#time").css({"position":"fixed","top":"3.1em","z-index":"10","background-color":"#000","color":"#fff","width":"93%","opacity":".5"})
+            $(".tongji").css("display","block");
+        }else {
+            $("#time").css({"position":"absolute","top":"-1.8em","background-color":"transparent","color":"#484848","width":"90%"});
+            $(".tongji").css("display","none");
+        }
+    });
+
+    // 回到顶部
+    $("#totop").click(function(){
+        $("body").scrollTop(0);
+    })
+
+    // 确定按钮隐藏
+    var h=$(window).height();
+    $(window).resize(function() {
+        if($(window).height()<h){
+            $('#foobtn').hide();
+        }
+        if($(window).height()>=h){
+            $('#foobtn').show();
+        }
+    });
+    </script>
+</body>
+
+</html>

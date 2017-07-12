@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>交易明细</title>
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/css/today.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/common.js"></script>
+</head>
+<style type="text/css">
+.weui-form-preview__hd .weui-form-preview__value {
+    font-style: normal;
+    font-size: 0.8em
+}
+
+.weui-form-preview__item {
+    padding: 5px 0px;
+}
+
+.weui-form-preview__bd,
+.weui-form-preview__label {
+    color: #000;
+}
+
+.weui-form-preview__bd {
+    background: #fff;
+}
+
+.weui-form-preview__ft {
+    line-height: 37px;
+    font-size: 20px;
+}
+
+i.icon-fanhui {
+    position: absolute;
+    left: 15px;
+}
+#cont {
+    margin-top:44px;
+}
+#cont .weui-form-preview {
+    background-color: #f6f1eb;
+    margin-bottom: 65px;
+}
+
+.weui-form-preview__ft .cheng {
+    margin-bottom: 0.4em;
+    background-color: #fff;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+}
+</style>
+
+<body>
+<div class="weui-form-preview">
+    <div class="weui-form-preview__ft toubu" style="margin-bottom:4px;background:#fff;position:fixed;top:0;left:0;width:100%;z-index:10;">
+        <a href="today.html">
+            <i class="icon iconfont icon-fanhui"></i>
+        </a>
+        <div style="width:100%;text-align:center;">
+          <span style="color:#0bb20c;" id="title"></span>
+        </div>
+    </div>
+</div>
+    <div class="weui_panel weui_panel_access" id="cont">
+        <div class="weui_panel_bd">
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a href="today.html" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-jiaoyi"></i>
+            </div>
+            <p class="weui-tabbar__label">当日交易</p>
+        </a>
+        <a href="trade.html" class="weui-tabbar__item weui-bar__item--on">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-lishi lanse-color"></i>
+            </div>
+            <p class="weui-tabbar__label ">历史交易</p>
+        </a>
+        <a href="stlm.html" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-chaxun"></i>
+            </div>
+            <p class="weui-tabbar__label">清算查询</p>
+        </a>
+    </div>
+    <!-- </div> -->
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    //下拉刷新
+    $(".details").pullToRefresh().on('pull-to-refresh', function(done) {
+        var self = this;
+        setTimeout(function() {
+            $.alert("已经没有更多了");
+            $(self).pullToRefreshDone();
+        }, 1000)
+    });
+
+    function querytoday() {
+                var tradeamt = getRequests("tradeamt");
+                var termcde = getRequests("termcde");
+                var intcdno = getRequests("intcdno");
+                var tradeamt = getRequests("tradeamt");
+                var tradetype = unescape(getRequests("tradetype"));
+                var pepdatetime = getRequests("pepdatetime");
+                var aprespnmsg = unescape(getRequests("aprespnmsg"));
+                var aprespn = unescape(getRequests("aprespn"));
+                var termnick = unescape(getRequests("termnick"));
+                var tradeclass = unescape(getRequests("tradeclass"));
+                var html = '';
+
+                if (tradetype == "支付宝刷卡支付" || tradetype == "支付宝-手机条码支付" || tradetype == "支付宝门店固码支付(立招)") {
+                    var icon = '<i class="icon iconfont icon-zhifubao" style="color:#1296db;font-size:30px;"></i>'
+                    var text = tradetype
+                }else if (tradetype == "微信-刷卡支付" || tradetype == "微信-网页支付") {
+                    var icon = '<i class="icon iconfont icon-weixin" style="color:#44b549;font-size:30px;"></i>'
+                    var text = tradetype
+                }else {
+                    var icon = ''
+                    var text = tradetype
+                }
+                    html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item"><label class="weui-form-preview__label" style="font-size:19px;">' + '交易金额' + '</label><span class="weui-form-preview__value" style="font-size:19px;">￥' + tradeamt + '</span></div>';
+
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '订单号' + '</label><span class="weui-form-preview__value">' + '12345' + '</span></div>';
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '终端号' + '</label><span class="weui-form-preview__value">' + termcde + '</span></div>';
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易类型' + '</label><span class="weui-form-preview__value">' + tradeclass + '</span></div>';
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '转出卡号' + '</label><span class="weui-form-preview__value">' + intcdno + '</span></div>';
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易时间' + '</label><span class="weui-form-preview__value">' + pepdatetime + '</span></div>';
+                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '商户名称' +
+                        '</label><span class="weui-form-preview__value" >' + termnick + '</span></div></div></div>';
+                    if (aprespn == '00' ) {
+                        html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon" style="margin-right:10px;"><i class="weui-icon-success" style="color:#09bb07;"></i></div><span style="color:#0bb20c;">' + aprespnmsg + '</span></a></div>';
+                    }else if (aprespn == 'FF' || aprespn == '06' || aprespn == 'AA') {
+                        html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon" style="margin-right:10px;"><i class="weui-icon-warn" style="color:red;"></i></div><span style="color:red;">' + '交易失败' + '</span></a></div>';
+                    }
+
+
+                $(".weui_panel div").append(html);
+                $("#title").html(text);
+                $("#title").before(icon);
+    };
+    querytoday();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+.weui-flex__mcbj {
+	/*background: url(../image/bj.jpg) no-repeat;*/
+	background-image: url(../images/bj.jpg);
+	background-size: cover;
+	padding: 40px;
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+.weui-flex__mcbj h4 {
+	color: #FFFFFF;
+	text-align: center;
+}
+.font1d2 {
+	font-size: 1.2rem !important;
+}
+.weui-cells-ce {
+	background-color: #FFFFFF;
+	line-height: 1.41176471;
+	font-size: 17px;
+	overflow: hidden;
+	position: relative;
+}
+.weui-flex__mc {
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #ececec;
+	/*padding: 10px;*/
+	text-align: center;
+}
+.orange-color {
+	color: #fb933a !important;
+}
+
+/*preview样式修改*/
+.weui-form-preview {
+	margin-top:4px;
+}
+.weui-form-preview__hd {
+	padding:0px 15px;
+	line-height:2em;
+}
+.weui-form-preview__hd .weui-form-preview__value {
+	font-size:1em;
+}
+.weui-form-preview__bd {
+	padding:0px 15px;
+}
+.weui-form-preview__ft {
+	line-height:35px;
+}
+.weui-form-preview__ft a {
+	color:#fb933a !important;
+}
+.weui-form-preview__hd label {
+	color:#000;
+}

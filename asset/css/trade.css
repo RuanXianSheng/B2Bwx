@@ -1,0 +1,18 @@
+.weui-flex__sty {
+	background: #FFFFFF;
+	border: 1px solid #ececec;
+	padding: 10px;
+	text-align: center;
+}
+
+.weui-flex__sty span {
+	display: block;
+	line-height:35px;
+	font-size:20px;
+}
+
+/*当前查询时间*/
+.page__bd .weui-cells__title {
+	margin:0;
+	line-height:2em;
+}

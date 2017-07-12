@@ -1,0 +1,61 @@
+.weui-flex__sty {
+	background: #FFFFFF;
+	border: 1px solid #ececec;
+	padding: 10px;
+	text-align: center;
+}
+
+.weui-flex__sty span {
+	display: block;
+	line-height:25px;
+	font-size:16px;
+	/*color:#e66629;*/
+}
+
+/*筛选页面按钮样式*/
+.weui-btn_primary_blue {
+	background-color: #e45614;
+}
+.font1d1 {
+	margin:0;
+	position:fixed;
+	top:0;
+	width:100%;
+	background-color:#e66629;
+	/*opacity:0.5;*/
+	z-index:2;
+	line-height:2.5em;
+	padding-left:0px;
+}
+.bt-btn__fixed {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	border-radius: 0;
+	z-index: 999;
+}
+.bt-filtrate__btn {
+	position: relative;
+}
+
+/*.bt-filtrate__container {
+	position: relative;
+	flex: 1;
+	height: 100%;
+	overflow-y: auto;
+}*/
+
+/*总金额模块样式*/
+.total {
+	/*margin-top:2.5em;*/
+}
+
+/*查询时间样式*/
+.page__bd .weui-cells__title {
+	margin:0;
+	line-height:1.5em;
+	height:1.5em;
+	font-size:12px;
+}
+

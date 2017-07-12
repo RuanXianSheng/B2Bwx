@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>修改密码</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style type="text/css">
+    
+    .weui-btn:after {
+        border: none;
+    }
+    
+    .weui-btn_primary {
+        background-color: #e66629;
+    }
+    
+    h1 {
+        background: #e66629;
+        line-height: 37px;
+        text-align: center;
+        position: relative;
+        font-size: 20px;
+        color: #fff;
+    }
+    
+    .weui-input {
+        font-size: 13px;
+    }
+    
+    .weui-cell_vcode {
+        padding: 10px 0px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    body {
+        overflow-x: hidden;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        top: 0;
+        -webkit-tap-highlight-color: transparent;
+        font-family: -apple-system-font, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .mt1 {
+        margin-top: 1rem;
+    }
+    
+    .bt-cell {
+        /*border-top: 1px solid #ddd;*/
+        /*border-right: 1px solid #ddd;*/
+        border-bottom: 1px solid #ddd;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    
+    .bt-content {
+        margin: 2em 0em;
+        padding: 1rem 1rem;
+        position: relative;
+    }
+    
+    .bt-cell__bd {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+    }
+    
+    .bt-cell__bd .weui-input {
+        width: 100%;
+        height: 2.2rem;
+        line-height: 2.2rem;
+        font-size: 13px;
+    }
+    
+    .bt-cell__hd {
+        padding-right: 1rem;
+        width:80px;
+    }
+    
+    .bt-cell__hd i {
+        font-size: 1.2rem;
+    }
+    
+    @media (max-height: 420px) {
+        .weui-footer {
+            position: relative;
+            margin-top: 1rem;
+        }
+    }
+    
+    .weui-label {
+        width: 4.5rem;
+        color: #666666;
+    }
+    </style>
+</head>
+
+<body class="login-bj">
+    <h1>修改密码</h1>
+    <div class="bt-content">
+        <div class="bt-cell">
+            <div class="bt-cell__hd">原 密 码</div>
+            <div class="bt-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入原密码" id="oldpwd">
+            </div>
+        </div>
+        <div class="bt-cell">
+            <div class="bt-cell__hd">新 密 码</div>
+            <div class="bt-cell__bd">
+                <input class="weui-input" type="text" placeholder="请输入新密码" id="newpwd">
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode">
+            <div class="bt-cell__hd">确认密码</div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" placeholder="请再次输入新密码" id="code">
+            </div>
+        </div>
+        <a href="javascript:;" class="weui-btn weui-btn_primary mt1" style="color:#fff;" id="btn1">确认修改</a>
+    </div>
+    <div class="weui-tabbar">
+        <a class="weui-tabbar__item" href="merchant.html">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-shanghuguanli"></i></div>
+            <p class="weui-tabbar__label">商铺信息</p>
+        </a>
+        <a class="weui-tabbar__item " href="personal.html">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-gerenxinxi "></i></div>
+            <p class="weui-tabbar__label ">个人设置</p>
+        </a>
+        <a class="weui-tabbar__item" id="admin_page" href="admin.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-guanli "></i></div>
+            <p class="weui-tabbar__label">人员管理</p>
+        </a>
+        <a class="weui-tabbar__item weui-bar__item--on" id="pwd_page" href="changepwd.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-xiugai lanse-color"></i></div>
+            <p class="weui-tabbar__label ">修改密码</p>
+        </a>
+    </div>
+</body>
+<script src="asset/dist/lib/fastclick.js"></script>
+<script src="asset/dist/js/jquery-weui.js"></script>
+<script type="text/javascript">
+$(function() {
+    FastClick.attach(document.body);
+});
+
+var curUrl = parseURL(window.location.href);
+var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
+
+if (!!curWxNo) {
+    sessionStorage.setItem("wxno", curWxNo);
+    sessionStorage.setItem("role", curRole);
+} else {
+    curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+    curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+    // double check
+    if (!curWxNo) {
+        $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+    }
+}
+
+// curRole =='b' ? $('#admin_page').css('display', 'block') : '';
+    curRole =='a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block')  : '';
+$("#btn1").click(function(e) {
+    e.preventDefault();
+
+    $("#btn1").css("background-color", "#e66629")
+    var oldpwd = !!$("#oldpwd").val() ? $("#oldpwd").val().trim() : '';
+    var newpwd = !!$("#newpwd").val() ? $("#newpwd").val().trim() : '';
+    var code = !!$("#code").val() ? $("#code").val().trim() : '';
+    // code = "123456";
+
+    if (!oldpwd) {
+        $.toptip('请填写原密码，不能为空！', 'error');
+        return;
+    }
+    if (!newpwd) {
+        $.toptip('请填写新密码，不能为空！', 'error');
+        return;
+    }
+    if (!code) {
+        $.toptip('请再次填写新密码！', 'error');
+        return;
+    }
+    if (oldpwd == newpwd) {
+         $.toptip('原密码与新密码一样！', 'error');
+        return;
+    }
+    if (newpwd != code) {
+         $.toptip('新密码与确认密码不一致！', 'error');
+        return;
+    }
+    if (newpwd.length < 6 || oldpwd.length< 6 || code.length < 6) {
+        $.toptip('密码错误，至少为6为数字！', 'error');
+        return;
+    }
+
+    var act = appServer + '/account/changepwd';
+    $.ajax({
+        url: act,
+        type: "post",
+        traditional: true,
+        cache: false,
+        data: {
+            "wxno": curWxNo,
+            "oldpwd": oldpwd,
+            "newpwd": newpwd
+        },
+        beforeSend: function(xhr) {
+            $("#btn1").attr('disabled', true).text('正在提交');
+        },
+        success: function(resp) {
+            $("#btn1").removeAttr('disabled').text('修改密码');
+
+            if (resp.respcode == '00') {
+                $.toptip('密码修改成功', 'success');
+            } else {
+                $.toptip(resp.respmsg, 'error');
+                return false;
+            }
+        },
+        error: function() {
+            $.toptip('网络连接失败', 'error');
+            $("#btn1").removeAttr('disabled').text('修改密码');
+        }
+    })
+})
+</script>
+
+</html>

@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>历史交易</title>
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/css/today.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/updown.js"></script>
+    <script src="asset/js/lazyimg.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style>
+    #datalist .weui-cell {
+        padding: 0px 15px 0px 90px;
+    }
+    
+    .weui-cell__bd span {
+        font-size: 14px;
+        color: #aaa;
+    }
+    
+    #datalist .weui-cells {
+        margin-top: 0px;
+        /*background: url("asset/images/wx.png") no-repeat 25px 50% #fff;*/
+        background-size: 35px 35px;
+        padding: 10px 0px;
+    }
+    
+    #datalist .weui-cell__ft span {
+        font-family: "Helvetica Neue", Helvetica, STHeiTi, Arial, sans-serif;
+    }
+    
+    .weui-popup__container .weui-cells {
+        /*text-align:right;*/
+    }
+    
+    #chosetype .weui-cell__ft {
+        width: 26px;
+        margin-left: -10px;
+        margin-right: 10px;
+    }
+    
+    #trade_time .weui-label {
+        width: 50px;
+    }
+    
+    .tongji {
+        display: none;
+    }
+    
+    .shijian {
+        background: #fff;
+        line-height: 20px;
+        text-align: center;
+        position: relative;
+        font-size: 0.8em;
+        color: #5b5b5b;
+    }
+    
+    #datalist .shibai {
+        background: url("asset/images/wxh.png") no-repeat 25px 50% #fff;
+    }
+    
+    #datalist .shibai .weui-cell__bd,
+    #datalist .shibai .weui-cell__ft {
+        /*color:#aaa;*/
+        color: red;
+    }
+     #datalist .shibai .weui-cell__bd span {
+        color:red;
+     }
+    
+    .weui-cells_form .weui-cell__ft {
+        font-size: 16px;
+    }
+    .totalamount , .totalcount{
+        height:25px;
+    }
+    </style>
+</head>
+<style>
+.weui-cells__title+.weui-cells {
+    margin-top: 6px;
+}
+</style>
+
+<body>
+    <div class="contentt">
+        <!--时间查询-->
+        <div class="weui-cells__title weui-flex-right on font1d1 text-right">
+            <a href="javascript:" class="bt-screen open-popup" data-target="#filtrate" style="color:#fff;">
+                        筛选<i class="icon iconfont icon-shaixuan"></i></a>
+        </div>
+        <div class="shijian" style="margin-top:41px;"><span id="begin"></span> 到 <span id="end"></span></div>
+        <div class="weui-flex total">
+            <div class="weui-flex__item weui-flex__sty"><span>总金额(元)</span><span class="red-color totalamount"></span></div>
+            <div class="weui-flex__item weui-flex__sty"><span>总笔数(笔)</span><span class="cyan-color totalcount"></span></div>
+        </div>
+        <div class="page__bd" id="datalist">
+            <div class="weui-cells__title weui-flex on" id="time">
+                <div class="weui-flex__item">查询时间：<span class="item" id="Launch-time"></span></div>
+                <div class="tongji">共<span id="bishu"></span>笔 ￥<span id="je"></span></div>
+            </div>
+            <div class="weui_panel weui_panel_access" style="margin-top:1.5em;">
+                <div class="weui_panel_bd">
+                </div>
+            </div>
+        </div>
+        <div id="filtrate" class="weui-popup__container bt-filtrate">
+            <div class="weui-popup__overlay"></div>
+            <div class="weui-popup__modal bt-filtrate__modal">
+                <div class="bt-filtrate__container">
+                    <div class="bt-filtrate__content" id="trade_time">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">交易时间</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_form">
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label for="date" class="weui-label">起始</label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" id="t2" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="weui-cell">
+                                <div class="weui-cell__hd">
+                                    <label for="date1" class="weui-label">终止</label>
+                                </div>
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" id="t3" type="text" value="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-filtrate__content" id="chosetype">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">选择类型</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_radio">
+                            <div class="weui-flex">
+                                <div class="weui-flex__item">
+                                    <div class="placeholder">
+                                        <label class="weui-cell weui-check__label" for="x11">
+                                            <div class="weui-cell__ft">
+                                                <input type="radio" class="weui-check" name="radio1" id="x11" checked="checked">
+                                                <span class="weui-icon-checked"></span>
+                                            </div>
+                                            <div class="weui-cell__bd">
+                                                <p>终端名称</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="weui-flex__item">
+                                    <div class="placeholder">
+                                        <label class="weui-cell weui-check__label" for="x12">
+                                            <div class="weui-cell__ft">
+                                                <input type="radio" name="radio1" class="weui-check" id="x12">
+                                                <span class="weui-icon-checked"></span>
+                                            </div>
+                                            <div class="weui-cell__bd">
+                                                <p>电话号码</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="weui-flex">
+                                <div class="weui-flex__item">
+                                    <div class="placeholder">
+                                        <label class="weui-cell weui-check__label" for="x13">
+                                            <div class="weui-cell__ft">
+                                                <input type="radio" name="radio1" class="weui-check" id="x13">
+                                                <span class="weui-icon-checked"></span>
+                                            </div>
+                                            <div class="weui-cell__bd">
+                                                <p>订单号</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="weui-flex__item">
+                                    <div class="placeholder">
+                                        <label class="weui-cell weui-check__label" for="x14">
+                                            <div class="weui-cell__ft">
+                                                <input type="radio" name="radio1" class="weui-check" id="x14">
+                                                <span class="weui-icon-checked"></span>
+                                            </div>
+                                            <div class="weui-cell__bd">
+                                                <p>终端号码</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="weui-flex">
+                                <div class="weui-flex__item">
+                                    <div class="placeholder">
+                                        <label class="weui-cell weui-check__label" for="x15">
+                                            <div class="weui-cell__ft">
+                                                <input type="radio" name="radio1" class="weui-check" id="x15">
+                                                <span class="weui-icon-checked"></span>
+                                            </div>
+                                            <div class="weui-cell__bd">
+                                                <p>转出卡号(后四位)</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weui-cells" style="padding:0;">
+                            <div class="weui-cell">
+                                <div class="weui-cell__bd">
+                                    <input class="weui-input" type="text" placeholder="请输入文本" id="search_value">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-filtrate__content" id="trade_type">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">交易类型</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_checkbox">
+                            <div class="weui-flex">
+                                <label class="weui-cell weui-check__label" for="s10">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" class="weui-check" name="checkbox1" id="s10" checked="checked" value="1">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>银行卡</p>
+                                    </div>
+                                </label>
+                                <label class="weui-cell weui-check__label" for="s11">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" class="weui-check" name="checkbox1" id="s11" value="2" checked="checked">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>支付宝</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="weui-flex">
+                                <label class="weui-cell weui-check__label" for="s12">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" name="checkbox1" class="weui-check" id="s12" value="3" checked="checked">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>微信支付</p>
+                                    </div>
+                                </label>
+                                <label class="weui-cell weui-check__label" for="s13">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" name="checkbox1" class="weui-check" id="s13" value="4" checked="checked">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>移动支付退款</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="weui-flex">
+                                <label class="weui-cell weui-check__label" for="s14">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" name="checkbox1" class="weui-check" id="s14" value="5" checked="checked">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>银联二维码</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-filtrate__content" id="tran_state">
+                        <div class="weui-cells__title weui-flex">
+                            <div class="weui-flex__item">交易状态</div>
+                            <i class="icon iconfont icon-xiangxiajiantou"></i>
+                        </div>
+                        <div class="weui-cells weui-cells_checkbox">
+                            <div class="weui-flex">
+                                <label class="weui-cell weui-check__label" for="s15">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" class="weui-check" name="checkbox2" id="s15" checked="checked" value="1">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>成功</p>
+                                    </div>
+                                </label>
+                                <label class="weui-cell weui-check__label" for="s16">
+                                    <div class="weui-cell__hd">
+                                        <input type="checkbox" name="checkbox2" class="weui-check" id="s16" value="2" checked="checked">
+                                        <i class="weui-icon-checked"></i>
+                                    </div>
+                                    <div class="weui-cell__bd">
+                                        <p>失败</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-flex"  id="foobtn">
+                    <div class="weui-flex__item">
+                        <a id="reset" class="weui-btn weui-btn_default bt-btn__fixed bt-filtrate__btn">重置</a>
+                    </div>
+                    <div class="weui-flex__item">
+                        <a id="confirm" class="weui-btn weui-btn_primary_blue bt-btn__fixed bt-filtrate__btn">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a href="today.html" class="weui-tabbar__item">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-jiaoyi"></i>
+            </div>
+            <p class="weui-tabbar__label">当日交易</p>
+        </a>
+        <a class="weui-tabbar__item weui-bar__item--on" id="trade_page">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-lishi lanse-color"></i>
+            </div>
+            <p class="weui-tabbar__label ">历史交易</p>
+        </a>
+        <a href="stlm.html" class="weui-tabbar__item" id="stlm_page" style="display:none;">
+            <div class="weui-tabbar__icon">
+                <i class="icon iconfont icon-chaxun"></i>
+            </div>
+            <p class="weui-tabbar__label">清算查询</p>
+        </a>
+    </div>
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <div class="totalnum" style="display:none"></div>
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+    
+    var curUrl = parseURL(window.location.href);
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
+    // && !!curRole && !!curRole.trim()
+
+    if (!!curWxNo && !!curRole) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+        sessionStorage.setItem("role", curRole);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+        // double check
+        if (!curWxNo || !curRole) {
+            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        }
+    }
+
+    curRole =='a' ? $('#stlm_page').css('display', 'block') : '';
+
+    if (curRole == 'c') {
+        window.close();
+    }
+    // 获取前一天时间
+    var today = new Date();
+    var yesterday_milliseconds = today.getTime() - 1000 * 60 * 60 * 24;
+    var yesterday = new Date();
+    yesterday.setTime(yesterday_milliseconds);
+    var strYear = yesterday.getFullYear(); //2017
+    var strDay = yesterday.getDate(); //15
+    var jstrDay = today.getDate(); //15
+    var strMonth = yesterday.getMonth() + 1; //01
+    mytime = today.toLocaleTimeString();
+    // var mytime = today.toLocaleString();
+    if (strMonth < 10) {
+        strMonth = "0" + strMonth;
+    }
+    if (strDay < 10) {
+        strDay = "0" + strDay;
+    }
+    if (jstrDay < 10) {
+        jstrDay = "0" + jstrDay;
+    }
+    var a = $("#Launch-time");
+    // "查询时间："
+    var t = strYear + "年" + strMonth + "月" + jstrDay + "日" + " " + mytime;
+    a.html(t);
+    //前一天时间
+    var strYesterday = strYear + "-" + strMonth + "-" + strDay;
+
+    //获取三十天前日期
+    var lw = new Date(today - 1000 * 60 * 60 * 24 * 91); //最后一个数字30可改，30天的意思
+    var lastY = lw.getFullYear();
+    var lastM = lw.getMonth() + 1;
+    var lastD = lw.getDate();
+    var startdate = lastY + "-" + (lastM < 10 ? "0" + lastM : lastM) + "-" + (lastD < 10 ? "0" + lastD : lastD); //三十天之前日期
+
+    if (getRequests("begin_date")) {
+    var begin_date = getRequests("begin_date") ? getRequests("begin_date")[0] : [];
+            var end_date = getRequests("end_date") ? getRequests("end_date")[0] : [];
+        var t2 = getRequests("t2") ? getRequests("t2")[0] : [];
+        var t3 = getRequests("t3") ? getRequests("t3")[0] : [];
+        var rq1 = formatTime (begin_date) + " " + t2 +"时";
+        var rq2 = formatTime (end_date) + " " + t3 + "时";
+    }else {
+        var rq1 = strYesterday + " " + "00时";
+        var rq2 = strYesterday + " " + "23时";
+    }
+    $("#t2").val(rq1);
+    $("#t3").val(rq2);
+
+    $("#t2").datetimePicker({
+        times: function() {
+            return [{
+                values: (function() {
+                    var hours = [];
+                    for (var i = 0; i < 24; i++) hours.push(i > 9 ? i : '0' + i);
+                    return hours;
+                })()
+            }, {
+                divider: true, // 这是一个分隔符
+                content: '点'
+            }];
+        },
+        onChange: function(picker, values, displayValues) {
+            console.log(values);
+        },
+    });
+
+    $("#t3").datetimePicker({
+        times: function() {
+            return [{
+                values: (function() {
+                    var hours = [];
+                    for (var i = 0; i < 24; i++) hours.push(i > 9 ? i : '0' + i);
+                    return hours;
+                })()
+            }, {
+                divider: true, // 这是一个分隔符
+                content: '点'
+            }];
+        },
+        onChange: function(picker, values, displayValues) {
+            console.log(values);
+        },
+    });
+
+
+    lode();
+    
+    //页面初始化
+    function lode() {
+        $("#t2").val(strYesterday + " 00点");
+        $("#t3").val(strYesterday + " 23点");
+        // 回填信息
+        if (getRequests("search_type")) {
+            var page_num = window.location.href.split("#!page_num=");
+            page_num = page_num.length == 2 ? page_num[1] : 1;
+            var search_type = getRequests("search_type") ? getRequests("search_type")[0] : "";
+            var search_value = getRequests("search_value") ? getRequests("search_value")[0] : "";
+            var tran_state = getRequests("tran_state") ? getRequests("tran_state") : [];
+            var trade_type = getRequests("trade_type") ? getRequests("trade_type") : [];
+            var begin_date = getRequests("begin_date") ? getRequests("begin_date")[0] : [];
+            var end_date = getRequests("end_date") ? getRequests("end_date")[0] : [];
+            var t2 = getRequests("t2") ? getRequests("t2")[0] : [];
+            var t3 = getRequests("t3") ? getRequests("t3")[0] : [];
+            // 选择类型
+            var nn = $("#chosetype input");
+            nn.eq(search_type).prop("checked", true);
+
+            // search_value
+            $("#search_value").val(unescape(search_value));
+
+            //交易类型
+            var len = trade_type;
+            $("#trade_type .weui-check").prop("checked", false);
+            for (var i = 0; i < len.length; i++) {
+                switch (len[i]) {
+                    case "1":
+                        $("#trade_type .weui-check").eq(0).prop("checked", true);
+                        break;
+                    case "2":
+                        $("#trade_type .weui-check").eq(1).prop("checked", true);
+                        break;
+                    case "3":
+                        $("#trade_type .weui-check").eq(2).prop("checked", true);
+                        break;
+                    case "4":
+                        $("#trade_type .weui-check").eq(3).prop("checked", true);
+                        break;
+                    case "5":
+                        $("#trade_type .weui-check").eq(4).prop("checked", true);
+                        break;
+                }
+            }
+
+            //交易状态
+            var state = tran_state;
+            
+            $("#tran_state .weui-check").prop("checked", false);
+            for (var i = 0; i < state.length; i++) {
+                switch (state[i]) {
+                    case "1":
+                        $("#tran_state .weui-check").eq(0).prop("checked", true);
+                        break;
+                    case "2":
+                        $("#tran_state .weui-check").eq(1).prop("checked", true);
+                        break;
+                    case "3":
+                        $("#tran_state .weui-check").eq(0).prop("checked", true);
+                        $("#tran_state .weui-check").eq(1).prop("checked", true);
+                        break;
+                }
+            }
+        }
+        if (getRequests("begin_date")) {
+            $("#begin").html(formatTime(begin_date) + " " + t2 + "点");
+            $("#end").html(formatTime(end_date) + " " + t3 + "点");
+            // alert(t2)
+            $("#t2").val(formatTime(begin_date) + " " + t2 + "点");
+            $("#t3").val(formatTime(end_date) + " " + t3 + "点");
+        } else {
+            $("#begin").html($("#t2").val());
+            $("#end").html($("#t3").val());
+        }
+    }
+
+
+    //上拉加载
+    $(".details").pullToRefresh().on('pull-to-refresh', function(done) {
+        var self = this;
+        setTimeout(function() {
+            $.alert("已经没有更多了");
+            $(self).pullToRefreshDone();
+        }, 1000)
+    });
+
+    // 筛选类型
+    var list = $("#chosetype .weui-check");
+
+    //页数 
+    var page = 0;
+    // 每页展示10个
+    var size = 10;
+    var nn = new Array();
+    
+    $('.weui_panel').dropload({
+        scrollArea: window,
+        autoLoad: true, //自动加载
+        domDown: { //上拉
+            domClass: 'dropload-down',
+            domRefresh: '<div class="dropload-refresh f15 "  style="line-height:2em;text-align:center;"><i class="icon icon-20"></i>上拉加载更多</div>',
+            domLoad: '<div class="dropload-load f15"  style="line-height:2em;text-align:center;"><span class="weui-loading"></span>正在加载中...</div>',
+            domNoData: '<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>'
+        },
+        loadDownFn: function(me) { //加载更多
+            if (getRequests("search_type") == undefined) {
+                var search_type = 0;
+            } else {
+                var search_type = getRequests("search_type");
+            }
+            // var search_value = $("#search_value").val();
+            page++;
+            var begin = (page - 1) * 10 + 1;
+            var end = page * 10;
+
+            // 判断是否加载到了最后一条数据
+            if (begin > $(".totalnum").html() && 　$(".totalnum").html() != "") {
+                $(".dropload-down").html('<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>');
+                return false;
+            }
+
+            if (getRequests("begin_date") == undefined) {
+                var begindate = strYesterday.split("-").join("");
+                var enddate = strYesterday.split("-").join("");
+            } else {
+                var begindate = getRequests("begin_date")[0].split("-").join("");
+                var enddate = getRequests("end_date")[0].split("-").join("");
+                //回填开始日期
+                var riqi1 = formatTime (begindate);
+                
+                //回填结束日期
+                var riqi2 = formatTime (enddate);
+
+                $("#date").val(riqi1);
+                $("#date1").val(riqi2);
+            }
+
+            // 时间点
+            var t2 = $("#t2").val().substring(11,13);
+            var t3 = $("#t3").val().substring(11,13);
+
+            var len = list.length;
+            for (i = 0; i < len; i++) {
+                var aa = list[i].checked;
+                if (aa == true) {
+                    var search_type = i;
+                }
+            }
+            
+            var search_value = $("#search_value").val();
+
+            var list2 = document.getElementsByName("checkbox1");
+            var trade_type = ((!list2[0].checked || 1 ) | (!list2[1].checked || 2 ) | (!list2[2].checked || 4) | (!list2[3].checked || 8) | (!list2[4].checked || 16));
+
+            var list3 = document.getElementsByName("checkbox2");
+            var m = "";
+            for (var i = 0; i < list3.length; i++) {
+                if (list3[i].checked)
+                    m += list3[i].value;
+            }
+            var tran_state = m.split("");
+            if (tran_state == 1) {
+                tran_state = 1;
+            }else if (tran_state == 2) {
+                tran_state = 2;
+            }else {
+                tran_state = 3;
+            }
+
+            var act = appServer + '/trade';
+            var aa;
+
+            $.ajax({
+                type: 'GET',
+                url: act ,
+                cache: false,
+                dataType: 'json',
+                data: {
+                    "wxno": curWxNo,
+                    "begintime":begindate,
+                    "beginhour":t2,
+                    "endtime":enddate,
+                    "endhour":t3,
+                    "search_type":search_type,
+                    "search_value":search_value,
+                    "trade_type":trade_type,
+                    "dealed":tran_state,
+                    "page_num":page
+
+                },
+                success: function(resp) {
+                    if (resp.respcode == '00') {
+                        var arrLen = resp.data.length;
+                        nn.push(resp.data);
+                        if (arrLen > 0) {
+                            var html = '';
+                            for (var i = 0; i < arrLen; i++) {
+                                if (resp.data[i].aprespn == '00'){
+                                    if (resp.data[i].tradetype == "支付宝-手机条码支付" || resp.data[i].tradetype == "支付宝刷卡支付" || resp.data[i].tradetype == "支付宝门店固码支付(立招)") {
+                                        html += '<div class="weui-cells" style="background:url(asset/images/zfb.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款成功' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    }else if (resp.data[i].tradetype == "微信-刷卡支付" || resp.data[i].tradetype == "微信-网页支付") {
+                                        html += '<div class="weui-cells" style="background:url(asset/images/wx.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款成功' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    } else {
+                                        html += '<div class="weui-cells" style="background:url(asset/images/yhk.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款成功' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    }
+                                }else {
+                                    if (resp.data[i].tradetype == "支付宝-手机条码支付" || resp.data[i].tradetype == "支付宝刷卡支付" || resp.data[i].tradetype == "支付宝门店固码支付(立招)") {
+                                        html += '<div class="weui-cells shibai" style="background:url(asset/images/zfbh.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款失败' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    }else if (resp.data[i].tradetype == "微信-刷卡支付" || resp.data[i].tradetype == "微信-网页支付") {
+                                        html += '<div class="weui-cells shibai" style="background:url(asset/images/wxh.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款失败' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    } else {
+                                        html += '<div class="weui-cells shibai" style="background:url(asset/images/yhkh.png) no-repeat 25px 50% #fff;"><a><div class="weui-cell"><div class="weui-cell__bd"><p>' + '收款失败' + '</p></div><div class="weui-cell__ft" >' + "￥" + '<span>' + resp.data[i].tradeamt + '</span></div></div>';
+                                    }
+                                }
+
+                                html += '<div class="weui-cell"><div class="weui-cell__bd"><span>' + resp.data[i].pepdatetime + '</span></div></div></a></div>';
+                            }
+                            $(".totalamount").html(resp.summary.total_trade_amount);
+                            $(".totalcount").html(resp.summary.total_trade_count);
+                            $(".totalnum").html(resp.record_count);
+                            // 如果没有数据
+                        } else {
+                            // 锁定
+                            me.lock();
+                            // 无数据
+                            me.noData();
+                        }
+                        // 为了测试，延迟1秒加载
+                        // setTimeout(function() {
+                            $('.weui_panel_bd').append(html);
+                            $("#datalist .weui_panel_bd .weui-cells").bind("click", fnMyFunc2 = function() {
+                                var n = $(this).index();
+                                var h = parseInt(n/15);
+                                if (n >= arrLen) {
+                                    n = n%arrLen;
+                                }
+                                var arr = "tradedetail.html?tradeamt=" + escape(nn[h][n].tradeamt) + "&termcde=" + nn[h][n].termcde  + "&tradeclass=" + escape(nn[h][n].tradeclass) + "&intcdno=" + nn[h][n].intcdno + "&tradetype=" + escape(nn[h][n].tradetype) + "&termnick=" + escape(nn[h][n].termnick) + "&pepdatetime=" + nn[h][n].pepdatetime + "&aprespnmsg=" + escape(nn[h][n].aprespnmsg) + "&aprespn=" + escape(nn[h][n].aprespn);
+                                window.location.href = arr;
+                            })
+                            var lazyloadImg = new LazyloadImg({
+                                el: '.weui-updown [data-img]', //匹配元素
+                                top: 50, //元素在顶部伸出长度触发加载机制
+                                right: 50, //元素在右边伸出长度触发加载机制
+                                bottom: 50, //元素在底部伸出长度触发加载机制
+                                left: 50, //元素在左边伸出长度触发加载机制
+                                qriginal: false, // true，自动将图片剪切成默认图片的宽高；false显示图片真实宽高
+                                load: function(el) {
+                                    el.style.cssText += '-webkit-animation: fadeIn 01s ease 0.2s 1 both;animation: fadeIn 1s ease 0.2s 1 both;';
+                                },
+                                error: function(el) {
+
+                                }
+                            });
+                            // 每次数据加载完，必须重置
+                            me.resetload();
+                        // }, 1000);
+                    }else {
+                        $.toptip(resp.respmsg, 'error');
+                        $(".dropload-down").html('<div class="dropload-noData"  style="line-height:2em;text-align:center;">没有更多数据了</div>');
+                    }
+                },
+                error: function(xhr, type) {
+                    $.toptip('网络连接失败', 'error');
+                    // 即使加载出错，也得重置
+                    me.resetload();
+                }
+            });
+        }
+    });
+
+    // if (getRequests("search_type") != undefined) {
+    //     $.toast("操作成功");
+    // }
+
+    
+    $("#confirm").bind("click", fnMyFunc1 = function() { //赋给函数变量
+            $("#begin").html($("#t2").val());
+            $("#end").html($("#t3").val());
+            // 交易类型
+            var len = list.length;
+            var list2 = document.getElementsByName("checkbox1");
+            var s = "";
+            for (var i = 0; i < list2.length; i++) {
+                if (list2[i].checked)
+                    s += list2[i].value;
+            }
+            var trade_type = s.split("");
+            var trade_types = "";
+            for (var i = 0; i < trade_type.length; i++) {
+                trade_types += "&trade_type=" + trade_type[i];
+            }
+            var list3 = document.getElementsByName("checkbox2");
+            var m = "";
+            for (var i = 0; i < list3.length; i++) {
+                if (list3[i].checked)
+                    m += list3[i].value;
+            }
+            var tran_state = m.split("");
+
+            if (tran_state == 1) {
+                tran_state = 1;
+            }else if (tran_state == 2) {
+                tran_state = 2;
+            }else {
+                tran_state = 3;
+            }
+
+            for (i = 0; i < len; i++) {
+                var aa = list[i].checked;
+                if (aa == true) {
+                    var search_type = i;
+                }
+            }
+            
+            var search_value = escape($("#search_value").val());
+
+            var begindate = $("#t2").val().substring(0,10).split("-").join("");
+            var enddate = $("#t3").val().substring(0,10).split("-").join("");
+            var t2 = $("#t2").val().substring(11,13);
+            var t3 = $("#t3").val().substring(11,13);
+
+            var arr = window.location.href.split("?");
+            arr[0] += "?" + "&search_type=" + search_type + trade_types + "&tran_state=" + tran_state + "&begin_date=" + begindate + "&end_date=" + enddate + "&t2=" + t2 + "&t3=" + t3 + "&search_value=" + search_value + "&wxno=" + curWxNo;
+            window.location.href = arr[0];
+        })
+
+    // 回到顶部
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > 40) {
+            $("#totop").css("display", "block");
+        } else {
+            $("#totop").css("display", "none");
+        }
+        // var num = "1em";
+        if ($(window).scrollTop() > 77) {
+            // alert(1)
+            $("#time").css({
+                "position": "fixed",
+                "top": "3.1em",
+                "z-index": "10",
+                "background-color": "#000",
+                "color": "#fff",
+                "width": "93%",
+                "opacity": ".5"
+            });
+            var bs = $(".totalcount").html();
+            var je = $(".totalamount").html();
+            $("#bishu").html(bs);
+            $("#je").html(je);
+            $(".tongji").css("display", "block");
+        } else {
+            $("#time").css({
+                "position": "absolute",
+                "top": "-1.8em",
+                "background-color": "transparent",
+                "color": "#484848",
+                "width": "90%"
+            });
+            $(".tongji").css("display", "none");
+        }
+    });
+
+    $("#totop").click(function() {
+        $("body").scrollTop(0);
+    })
+
+    $("#reset").click(function() {
+        $(".weui-check").prop("checked", true);
+        $("#x11").prop("checked", true);
+        $("#t2").val(strYesterday + " 00点");
+        $("#t3").val(strYesterday + " 23点");
+    })
+
+    // 隐藏确定按钮
+    var h=$(window).height();
+    $(window).resize(function() {
+        if($(window).height()<h){
+            $('#foobtn').hide();
+        }
+        if($(window).height()>=h){
+            $('#foobtn').show();
+        }
+    });
+    </script>
+</body>
+
+</html>

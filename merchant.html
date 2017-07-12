@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>商户概况</title>
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <link rel="stylesheet" href="asset/css/merchant.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/updown.js"></script>
+    <script src="asset/js/lazyimg.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style type="text/css">
+    .weui-form-preview__label {
+        padding-left: 36px;
+    }
+    
+    .weui-form-preview__hd .weui-form-preview__value {
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="weui-flex__mcbj">
+        <h4 class="weui-media-box__title font1d2 mername" style="height:36px"></h4>
+    </div>
+    <div class="weui-flex">
+        <div class="weui-flex__item weui-cells-ce weui-flex__mc">
+            <div class="weui-media-box__hd">
+                <i class="icon iconfont icon-ruwangkaihu font1d2"> </i>
+            </div>
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__desc">入网时间</h4>
+                <p class="weui-media-box__title orange-color startdate"></p>
+            </div>
+        </div>
+        <div class="weui-flex__item weui-cells-ce weui-flex__mc">
+            <div class="weui-media-box__hd">
+                <i class="icon iconfont icon-posji font1d2"></i>
+            </div>
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__desc">终端数</h4>
+                <p class="weui-media-box__title orange-color termcount"></p>
+            </div>
+        </div>
+    </div>
+    <div class="page__bd" id="datalist">
+        <div class="weui_panel_bd">
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a class="weui-tabbar__item  weui-bar__item--on">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-shanghuguanli lanse-color"></i></div>
+            <p class="weui-tabbar__label">商铺信息</p>
+        </a>
+        <a class="weui-tabbar__item" href="personal.html">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-gerenxinxi"></i></div>
+            <p class="weui-tabbar__label ">个人设置</p>
+        </a>
+        <a class="weui-tabbar__item" id="admin_page" href="admin.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-guanli "></i></div>
+            <p class="weui-tabbar__label">人员管理</p>
+        </a>
+        <a class="weui-tabbar__item" id="pwd_page" href="changepwd.html" style="display:none">
+            <div class="weui-tabbar__icon"><i class="icon iconfont icon-xiugai"></i></div>
+            <p class="weui-tabbar__label ">修改密码</p>
+        </a>
+    </div>
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    var curUrl = parseURL(window.location.href);
+    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
+    // && !!curRole && !!curRole.trim()
+
+    if (!!curWxNo && !!curRole) {
+        sessionStorage.setItem("wxno", curWxNo);
+        sessionStorage.setItem("wxname", curWxName);
+        sessionStorage.setItem("role", curRole);
+    } else {
+        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+        // double check
+        if (!curWxNo || !curRole) {
+            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        }
+    }
+
+    curRole =='b' ? $('#admin_page').css('display', 'block') : '';
+    curRole =='a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block')  : '';
+
+    $(function() {
+        (function() {
+            var act = appServer + '/merchant/info';
+            $.ajax({
+                url: act,
+                type: "get",
+                cache: false,
+                data: {
+                    "wxno": curWxNo,
+                },
+                success: function(resp) {
+                    if (resp.respcode == '00') {
+                        var shoplen = resp.shops.length;
+                        var html = '';
+
+                        for (var i = 0; i < shoplen; i++) {
+                            var termslen = resp.shops[i].terms.length;
+                            html += '<div class="weui-form-preview"><div class="weui-form-preview__hd"><div class="weui-form-preview__item"><label class="weui-form-preview__label"></label><em class="weui-form-preview__value">' + resp.shops[i].shopname + '</em></div></div>';
+                            for (var j = 0; j < termslen; j++) {
+                                html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item" style="position:relative;"><p style="position:absolute;left:0px;top:0px;">' + parseInt(j + 1) + '</p><label class="weui-form-preview__label">商户号</label>';
+                                html += '<span class="weui-form-preview__value">' + resp.shops[i].terms[j].mercode + '</span><label class="weui-form-preview__label">终端号</label><span class="weui-form-preview__value">' + resp.shops[i].terms[j].termcde + '</span></div></div>';
+                            }
+                            curRole =='a' ? 
+                            html += '<div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary">分享绑定</a></div></div></div>' : '';
+                        }
+
+                        $(".startdate").html(resp.appdt);
+                        $(".termcount").html(resp.termcount);
+                        $(".mername").html(resp.shopname);
+                        $(".weui_panel_bd").append(html);
+                        $(".weui-form-preview a").bind("click", fnMyFunc1 = function() {
+                            var n = $(this).parents(".weui-form-preview").index();
+                            var arr = "share.html?" + "&shopid=" + resp.shops[n].shopid + "&shopname=" + escape(resp.shops[n].shopname);
+                            window.location.href = arr;
+                        })
+
+                    } else {
+                        $.toptip(resp.respmsg, 'error');
+                        return false;
+                    }
+                },
+                error: function() {
+                    $.toptip('网络连接失败', 'error');
+                }
+            });
+        })();
+    });
+
+
+    // 回到顶部
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > 40) {
+            $("#totop").css("display", "block");
+        } else {
+            $("#totop").css("display", "none");
+        }
+    });
+
+    $("#totop").click(function() {
+        $("body").scrollTop(0);
+    })
+    </script>
+</body>
+
+</html>
