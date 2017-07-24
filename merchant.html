@@ -18,16 +18,21 @@
     .weui-form-preview__label {
         padding-left: 36px;
     }
-    
+
     .weui-form-preview__hd .weui-form-preview__value {
         text-align: center;
+    }
+
+    #startdate,
+    #termcount {
+        height: 24px;
     }
     </style>
 </head>
 
 <body>
     <div class="weui-flex__mcbj">
-        <h4 class="weui-media-box__title font1d2 mername" style="height:36px"></h4>
+        <h4 class="weui-media-box__title font1d2" style="height:36px" id="mername"></h4>
     </div>
     <div class="weui-flex">
         <div class="weui-flex__item weui-cells-ce weui-flex__mc">
@@ -36,7 +41,7 @@
             </div>
             <div class="weui-media-box__bd">
                 <h4 class="weui-media-box__desc">入网时间</h4>
-                <p class="weui-media-box__title orange-color startdate"></p>
+                <p class="weui-media-box__title orange-color startdate" id="startdate"></p>
             </div>
         </div>
         <div class="weui-flex__item weui-cells-ce weui-flex__mc">
@@ -45,12 +50,12 @@
             </div>
             <div class="weui-media-box__bd">
                 <h4 class="weui-media-box__desc">终端数</h4>
-                <p class="weui-media-box__title orange-color termcount"></p>
+                <p class="weui-media-box__title orange-color termcount" id="termcount"></p>
             </div>
         </div>
     </div>
     <div class="page__bd" id="datalist">
-        <div class="weui_panel_bd">
+        <div class="weui_panel_bd" id="weui_panel_bd">
         </div>
     </div>
     <div class="weui-tabbar">
@@ -78,79 +83,123 @@
     $(function() {
         FastClick.attach(document.body);
     });
+    ! function() {
+        var curUrl = parseURL(window.location.href);
+        var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+        var curWxName = !!curUrl.params.wxname ? unescape(curUrl.params.wxname.trim()) : '';
+        var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
 
-    var curUrl = parseURL(window.location.href);
-    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
-    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
-    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
-    // && !!curRole && !!curRole.trim()
+        if (!!curWxNo && !!curRole) {
+            sessionStorage.setItem("wxno", curWxNo);
+            sessionStorage.setItem("wxname", curWxName);
+            sessionStorage.setItem("role", curRole);
+        } else {
+            curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+            curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+            curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
 
-    if (!!curWxNo && !!curRole) {
-        sessionStorage.setItem("wxno", curWxNo);
-        sessionStorage.setItem("wxname", curWxName);
-        sessionStorage.setItem("role", curRole);
-    } else {
-        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
-        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
-        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
-
-        // double check
-        if (!curWxNo || !curRole) {
-            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+            // double check
+            if (!curWxNo || !curRole) {
+                $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+                return;
+            }
         }
-    }
 
-    curRole =='b' ? $('#admin_page').css('display', 'block') : '';
-    curRole =='a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block')  : '';
+        curRole == 'b' ? $('#admin_page').css('display', 'block') : '';
+        curRole == 'a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block') : '';
 
-    $(function() {
-        (function() {
-            var act = appServer + '/merchant/info';
-            $.ajax({
-                url: act,
-                type: "get",
-                cache: false,
-                data: {
-                    "wxno": curWxNo,
-                },
-                success: function(resp) {
-                    if (resp.respcode == '00') {
-                        var shoplen = resp.shops.length;
-                        var html = '';
+        $(function() {
+            (function() {
+                var act = appServer + '/merchant/info';
+                $.ajax({
+                    url: act,
+                    type: "get",
+                    cache: false,
+                    data: {
+                        "wxno": curWxNo,
+                    },
+                    success: function(resp) {
+                        if (resp.respcode == '00') {
+                            var shoplen = resp.shops.length;
+                            var html = '';
 
-                        for (var i = 0; i < shoplen; i++) {
-                            var termslen = resp.shops[i].terms.length;
-                            html += '<div class="weui-form-preview"><div class="weui-form-preview__hd"><div class="weui-form-preview__item"><label class="weui-form-preview__label"></label><em class="weui-form-preview__value">' + resp.shops[i].shopname + '</em></div></div>';
-                            for (var j = 0; j < termslen; j++) {
-                                html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item" style="position:relative;"><p style="position:absolute;left:0px;top:0px;">' + parseInt(j + 1) + '</p><label class="weui-form-preview__label">商户号</label>';
-                                html += '<span class="weui-form-preview__value">' + resp.shops[i].terms[j].mercode + '</span><label class="weui-form-preview__label">终端号</label><span class="weui-form-preview__value">' + resp.shops[i].terms[j].termcde + '</span></div></div>';
+                            for (var i = 0; i < shoplen; i++) {
+                                var termslen = resp.shops[i].terms.length;
+                                html +=
+                                    '<div class="weui-form-preview"><div class="weui-form-preview__hd"><div class="weui-form-preview__item"><label class="weui-form-preview__label"></label><em class="weui-form-preview__value">' +
+                                    resp.shops[i].shopname + '</em></div></div>';
+                                for (var j = 0; j < termslen; j++) {
+                                    html +=
+                                        '<div class="weui-form-preview__bd"><div class="weui-form-preview__item" style="position:relative;"><p style="position:absolute;left:0px;top:0px;">' +
+                                        parseInt(j + 1) +
+                                        '</p><label class="weui-form-preview__label">商户号</label>';
+                                    html += '<span class="weui-form-preview__value">' + resp.shops[i].terms[j].mercode +
+                                        '</span><label class="weui-form-preview__label">终端号</label><span class="weui-form-preview__value">' +
+                                        resp.shops[i].terms[j].termcde + '</span></div></div>';
+                                }
+                                curRole == 'a' ?
+                                    html +=
+                                    '<div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary">分享绑定</a></div></div></div>' :
+                                    '';
                             }
-                            curRole =='a' ? 
-                            html += '<div class="weui-form-preview__ft"><a class="weui-form-preview__btn weui-form-preview__btn_primary">分享绑定</a></div></div></div>' : '';
+
+                            $("#startdate").html(formatTime(resp.appdt));
+                            $("#termcount").html(resp.termcount);
+                            $("#mername").html(resp.shopname);
+                            $("#weui_panel_bd").append(html);
+                            $(".weui-form-preview a").bind("click", fnMyFunc1 = function() {
+                                var n = $(this).parents(".weui-form-preview").index();
+                                var shopid = resp.shops[n].shopid;
+                                $.confirm("您确定要分享该商户吗?", "提示", function() {
+                                    var act1 = appServer + '/share/getinfo';
+                                    $.ajax({
+                                        url: act1,
+                                        type: "get",
+                                        traditional: true,
+                                        cache: false,
+                                        data: {
+                                            "shopid": shopid,
+                                            "wxno": curWxNo
+                                        },
+                                        beforeSend: function() {},
+                                        success: function(resp) {
+                                            if (resp.respcode == '00') {
+                                                var enddt = formatTime(resp.expire);
+                                                var qrcode = resp.ticket;
+                                                var url = resp.url;
+                                                var shopname = resp.shopname;
+
+                                                var arr = "share.html?" + "shopname=" + escape(
+                                                    shopname) + "&enddt=" + escape(enddt) + "&qrcode=" + qrcode + "&url=" + escape(url);
+                                                window.location.href = arr;
+                                            } else if (resp.respcode == '02') {
+                                                $.toast.prototype.defaults.duration = 500000000;
+                                                $.toast(resp.respmsg, "forbidden");
+                                            } else {
+                                                $.toptip(resp.respmsg, 'error');
+                                                return false;
+                                            }
+                                        },
+                                        error: function(xhr, type) {
+                                            $.toptip('网络连接失败', 'error');
+                                        }
+                                    })
+                                });
+                            })
+                        } else if (resp.respcode == '02') {
+                            $.toast.prototype.defaults.duration = 500000000;
+                            $.toast(resp.respmsg, "forbidden");
+                        } else {
+                            $.toptip(resp.respmsg, 'error');
                         }
-
-                        $(".startdate").html(resp.appdt);
-                        $(".termcount").html(resp.termcount);
-                        $(".mername").html(resp.shopname);
-                        $(".weui_panel_bd").append(html);
-                        $(".weui-form-preview a").bind("click", fnMyFunc1 = function() {
-                            var n = $(this).parents(".weui-form-preview").index();
-                            var arr = "share.html?" + "&shopid=" + resp.shops[n].shopid + "&shopname=" + escape(resp.shops[n].shopname);
-                            window.location.href = arr;
-                        })
-
-                    } else {
-                        $.toptip(resp.respmsg, 'error');
-                        return false;
+                    },
+                    error: function() {
+                        $.toptip('网络连接失败', 'error');
                     }
-                },
-                error: function() {
-                    $.toptip('网络连接失败', 'error');
-                }
-            });
-        })();
-    });
-
+                });
+            })();
+        });
+    }();
 
     // 回到顶部
     $(window).scroll(function() {

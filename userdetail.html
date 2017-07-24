@@ -20,23 +20,23 @@
         z-index: 999;
         background-color: #f3f3f3;
     }
-    
+
     .weui-media-skip {
         display: block;
     }
-    
+
     .weui-media-box {
         padding: 15px 15px 0px;
     }
-    
+
     .weui-media-box__desc {
         margin-bottom: 4px;
     }
-    
+
     .weui-loadmore_line .weui-loadmore__tips {
         background-color: transparent;
     }
-    
+
     .weui-media-box__title {
         word-wrap: break-word;
         white-space: normal;
@@ -44,11 +44,11 @@
         padding-bottom: 6px;
         line-height: 25px;
     }
-    
+
     .weui-loadmore {
         margin-bottom: 65px;
     }
-    
+
     .placeholder {
         margin: 5px;
         padding: 0 10px;
@@ -58,22 +58,22 @@
         text-align: center;
         color: #000;
     }
-    
+
     .weui-cells__title {
         font-size: 17px;
     }
-    
+
     .shanchu {
         float: right;
         margin-right: 15px;
     }
-    
+
     .icon-shanchu1 {
         color: #fff;
         font-size: 18px;
         /*padding-bottom:5px;*/
     }
-    
+
     h1 {
         background: #e66629;
         line-height: 37px;
@@ -82,22 +82,25 @@
         font-size: 20px;
         color: #fff;
     }
-    
+
     h1 .icon-fanhui {
-        margin-left: 15px;
+        position: absolute;
+        left: 15px;
         color: #fff;
-        float: left;
+        /*margin-left: 15px;
+        color: #fff;
+        float: left;*/
     }
-    
+
     .weui-cell {
         background: #fff;
     }
-    
+
     .weui-cells {
         background-color: transparent;
         padding: 0px;
     }
-    
+
     .demos-content-padded {
         background: #fff;
     }
@@ -106,7 +109,7 @@
 
 <body>
     <h1 class="clearfix">
-        <a onclick="javascript:window.history.go(-1);">
+        <a onclick="javascript:window.history.go(-1);return false;">
             <i class="icon iconfont icon-fanhui"></i>
         </a>人员详情
         <span class="shanchu">
@@ -177,57 +180,56 @@
     <script src="asset/dist/lib/fastclick.js"></script>
     <script src="asset/dist/js/jquery-weui.js"></script>
     <script>
-    var curUrl = parseURL(window.location.href);
-    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
-    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
-    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
-    // && !!curRole && !!curRole.trim()
+    $(function() {
+        FastClick.attach(document.body);
+    });
 
-    if (!!curWxNo && !!curRole) {
-        sessionStorage.setItem("wxno", curWxNo);
-        sessionStorage.setItem("wxname", curWxName);
-        sessionStorage.setItem("role", curRole);
-    } else {
-        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
-        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
-        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+    ! function() {
+        var curUrl = parseURL(window.location.href);
+        var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+        var curWxName = !!curUrl.params.wxname ? unescape(curUrl.params.wxname.trim()) : '';
+        var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
 
-        // double check
-        if (!curWxNo || !curRole) {
-            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+        if (!!curWxNo && !!curRole) {
+            sessionStorage.setItem("wxno", curWxNo);
+            sessionStorage.setItem("wxname", curWxName);
+            sessionStorage.setItem("role", curRole);
+        } else {
+            curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+            curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+            curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+
+            // double check
+            if (!curWxNo || !curRole) {
+                $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+                return;
+            }
         }
-    }
 
-    if (curRole == 'c') {
-        window.close();
-    }
+        var name = !!curUrl.params.name ? unescape(curUrl.params.name.trim()) : '';
+        var mobile = !!curUrl.params.mobile ? curUrl.params.mobile.trim() : '';
+        var createdt = !!curUrl.params.createdt ? curUrl.params.createdt.trim() : '';
+        var notify_flag = !!curUrl.params.notify_flag ? curUrl.params.notify_flag.trim() : '';
+        var user_role = !!curUrl.params.user_role ? curUrl.params.user_role.trim() : '';
 
-    var name = !!curUrl.params.name ? unescape(curUrl.params.name.trim()) : '';
-    var mobile = !!curUrl.params.mobile ? curUrl.params.mobile.trim() : '';
-    var createdt = !!curUrl.params.createdt ? curUrl.params.createdt.trim() : '';
-    var notify_flag = !!curUrl.params.notify_flag ? curUrl.params.notify_flag.trim() : '';
-    var user_role = !!curUrl.params.user_role ? curUrl.params.user_role.trim() : '';
+        $('#user_name').text(name);
+        if (user_role == 1) {
+            $('#btnsave').css('display', 'none');
+            $('#deluser-confirm').css('display', 'none');
+            $('#user_role').html('<option value="1">老板</option>');
+            $('#user_role').attr('disabled', 'disabled');
+            $('#notify_flag').attr('disabled', 'disabled');
+        } else {
+            $('#user_role').html('<option value="2">店长</option><option value="3">店员</option>');
+            $('#user_role').val(user_role);
+        }
 
+        $('#createdt').text(formatTime(createdt));
+        $('#mobile').text(mobile);
+        notify_flag == 1 ? $('#notify_flag').attr('checked', 'checked') : '';
 
-    $('#user_name').text(name);
-    if (user_role == 1) {
-        $('#deluser-confirm').css('display', 'none');
-        $('#user_role').html('<option value="1">老板</option>');
-        $('#user_role').attr('disabled', 'disabled');
-        $('#notify_flag').attr('disabled', 'disabled');
-        $('#btnsave').css('display', 'none');
-    } else {
-        $('#user_role').html('<option value="2">店长</option><option value="3">店员</option>');
-        $('#user_role').val(user_role);
-    }
-
-
-    $('#createdt').text(createdt);
-    $('#mobile').text(mobile);
-    notify_flag == 1 ? $('#notify_flag').attr('checked', 'checked') : '';
-
-    // 点击保存
-    $("#btnsave").click(function(e) {
+        // 点击保存
+        $("#btnsave").click(function(e) {
             e.preventDefault();
 
             var mobile = $(".mobile").text();
@@ -268,9 +270,11 @@
                     $("#btnsave").removeAttr('disabled').text('保存');
                     if (resp.respcode == '00') {
                         $.toptip('保存成功', 'success');
+                    } else if (resp.respcode == '02') {
+                        $.toast.prototype.defaults.duration = 500000000;
+                        $.toast(resp.respmsg, "forbidden");
                     } else {
                         $.toptip(resp.respmsg, 'error');
-                        return false;
                     }
                 },
                 error: function() {
@@ -279,41 +283,45 @@
                 }
             })
         })
+
         // 删除人员
-    $("#deluser-confirm").click(function(e) {
-        e.preventDefault();
+        $("#deluser-confirm").click(function(e) {
+            e.preventDefault();
 
-        $.confirm("您确定要删除该该店员吗?", "确认删除?", function() {
-            var act = appServer + '/admin/deluser';
+            $.confirm("您确定要删除该该店员吗?", "确认删除?", function() {
+                var act = appServer + '/admin/deluser';
 
-            $.ajax({
-                url: act,
-                type: "post",
-                traditional: true,
-                data: {
-                    "wxno": wxno,
-                    "wxname": wxname,
-                    "mobile": mobile
-                },
-                beforeSend: function() {},
-                success: function(resp) {
-                    if (resp.respcode == '00') {
-                        $.toast("该用户已删除,3秒后自动跳转到管理页面");
-                        setTimeout(function() {
-                            window.location.href = 'admin.html';
-                        }, 3000);
-                    } else {
-                        $.toptip(resp.respmsg, 'error');
+                $.ajax({
+                    url: act,
+                    type: "post",
+                    traditional: true,
+                    data: {
+                        "wxno": wxno,
+                        "wxname": wxname,
+                        "mobile": mobile
+                    },
+                    beforeSend: function() {},
+                    success: function(resp) {
+                        if (resp.respcode == '00') {
+                            $.toast("该用户已删除,3秒后自动跳转到管理页面");
+                            setTimeout(function() {
+                                window.location.href = 'admin.html';
+                            }, 3000);
+                        } else if (resp.respcode == '02') {
+                            $.toast.prototype.defaults.duration = 500000000;
+                            $.toast(resp.respmsg, "forbidden");
+                        } else {
+                            $.toptip(resp.respmsg, 'error');
+                        }
+
+                    },
+                    error: function() {
+                        $.toptip('网络连接失败', 'error');
                     }
-
-                },
-                error: function() {
-                    $.toptip('网络连接失败', 'error');
-                }
+                })
             })
-        })
-    });
-
+        });
+    }();
 
     // 回到顶部
     $(window).scroll(function() {

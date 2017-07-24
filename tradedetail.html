@@ -41,9 +41,11 @@ i.icon-fanhui {
     position: absolute;
     left: 15px;
 }
+
 #cont {
-    margin-top:44px;
+    margin-top: 40px;
 }
+
 #cont .weui-form-preview {
     background-color: #f6f1eb;
     margin-bottom: 65px;
@@ -56,19 +58,23 @@ i.icon-fanhui {
     width: 100%;
     text-align: center;
 }
+
+#title {
+    vertical-align: middle;
+}
 </style>
 
 <body>
-<div class="weui-form-preview">
-    <div class="weui-form-preview__ft toubu" style="margin-bottom:4px;background:#fff;position:fixed;top:0;left:0;width:100%;z-index:10;">
-        <a href="today.html">
+    <div class="weui-form-preview">
+        <div class="weui-form-preview__ft toubu" style="margin-bottom:4px;background:#fff;position:fixed;top:0;left:0;width:100%;z-index:10;">
+            <a onclick="javascript:window.history.go(-1);return false;">
             <i class="icon iconfont icon-fanhui"></i>
         </a>
-        <div style="width:100%;text-align:center;">
-          <span style="color:#0bb20c;" id="title"></span>
+            <div style="width:100%;text-align:center;">
+                <span style="color:#0bb20c;" id="title"></span>
+            </div>
         </div>
     </div>
-</div>
     <div class="weui_panel weui_panel_access" id="cont">
         <div class="weui_panel_bd">
         </div>
@@ -80,13 +86,13 @@ i.icon-fanhui {
             </div>
             <p class="weui-tabbar__label">当日交易</p>
         </a>
-        <a href="trade.html" class="weui-tabbar__item weui-bar__item--on">
+        <a href="trade.html" class="weui-tabbar__item weui-bar__item--on" style="display:none;">
             <div class="weui-tabbar__icon">
                 <i class="icon iconfont icon-lishi lanse-color"></i>
             </div>
             <p class="weui-tabbar__label ">历史交易</p>
         </a>
-        <a href="stlm.html" class="weui-tabbar__item">
+        <a href="stlm.html" class="weui-tabbar__item" id="stlm_page" style="display:none;">
             <div class="weui-tabbar__icon">
                 <i class="icon iconfont icon-chaxun"></i>
             </div>
@@ -101,59 +107,79 @@ i.icon-fanhui {
         FastClick.attach(document.body);
     });
 
-    //下拉刷新
-    $(".details").pullToRefresh().on('pull-to-refresh', function(done) {
-        var self = this;
-        setTimeout(function() {
-            $.alert("已经没有更多了");
-            $(self).pullToRefreshDone();
-        }, 1000)
-    });
+    ! function() {
+        var curUrl = parseURL(window.location.href);
 
-    function querytoday() {
-                var tradeamt = getRequests("tradeamt");
-                var termcde = getRequests("termcde");
-                var intcdno = getRequests("intcdno");
-                var tradeamt = getRequests("tradeamt");
-                var tradetype = unescape(getRequests("tradetype"));
-                var pepdatetime = getRequests("pepdatetime");
-                var aprespnmsg = unescape(getRequests("aprespnmsg"));
-                var aprespn = unescape(getRequests("aprespn"));
-                var termnick = unescape(getRequests("termnick"));
-                var tradeclass = unescape(getRequests("tradeclass"));
-                var html = '';
+        var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+        var curWxName = !!curUrl.params.wxname ? unescape(curUrl.params.wxname.trim()) : '';
+        var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
 
-                if (tradetype == "支付宝刷卡支付" || tradetype == "支付宝-手机条码支付" || tradetype == "支付宝门店固码支付(立招)") {
-                    var icon = '<i class="icon iconfont icon-zhifubao" style="color:#1296db;font-size:30px;"></i>'
-                    var text = tradetype
-                }else if (tradetype == "微信-刷卡支付" || tradetype == "微信-网页支付") {
-                    var icon = '<i class="icon iconfont icon-weixin" style="color:#44b549;font-size:30px;"></i>'
-                    var text = tradetype
-                }else {
-                    var icon = ''
-                    var text = tradetype
-                }
-                    html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item"><label class="weui-form-preview__label" style="font-size:19px;">' + '交易金额' + '</label><span class="weui-form-preview__value" style="font-size:19px;">￥' + tradeamt + '</span></div>';
+        if (!!curWxNo && !!curRole) {
+            sessionStorage.setItem("wxno", curWxNo);
+            sessionStorage.setItem("wxname", curWxName);
+            sessionStorage.setItem("role", curRole);
+        } else {
+            curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+            curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+            curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
 
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '订单号' + '</label><span class="weui-form-preview__value">' + '12345' + '</span></div>';
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '终端号' + '</label><span class="weui-form-preview__value">' + termcde + '</span></div>';
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易类型' + '</label><span class="weui-form-preview__value">' + tradeclass + '</span></div>';
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '转出卡号' + '</label><span class="weui-form-preview__value">' + intcdno + '</span></div>';
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易时间' + '</label><span class="weui-form-preview__value">' + pepdatetime + '</span></div>';
-                    html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '商户名称' +
-                        '</label><span class="weui-form-preview__value" >' + termnick + '</span></div></div></div>';
-                    if (aprespn == '00' ) {
-                        html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon" style="margin-right:10px;"><i class="weui-icon-success" style="color:#09bb07;"></i></div><span style="color:#0bb20c;">' + aprespnmsg + '</span></a></div>';
-                    }else if (aprespn == 'FF' || aprespn == '06' || aprespn == 'AA') {
-                        html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon" style="margin-right:10px;"><i class="weui-icon-warn" style="color:red;"></i></div><span style="color:red;">' + '交易失败' + '</span></a></div>';
-                    }
+            // double check
+            if (!curWxNo || !curRole) {
+                $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+            }
+        }
+
+        curRole == 'b' ? $('#trade_page').css('display', 'block') : '';
+        curRole == 'a' ? $('#trade_page').css('display', 'block') && $('#stlm_page').css('display', 'block') : '';
+
+        var tradeamt = !!curUrl.params.tradeamt ? curUrl.params.tradeamt.trim() : '';
+        var termcde = !!curUrl.params.termcde ? curUrl.params.termcde.trim() : '';
+        var outcdno = !!curUrl.params.outcdno ? curUrl.params.outcdno.trim() : '-';
+        var tradeamt = !!curUrl.params.tradeamt ? curUrl.params.tradeamt.trim() : '';
+        var tradetype = !!curUrl.params.tradetype ? unescape(curUrl.params.tradetype.trim()) : '';
+        var pepdatetime = !!curUrl.params.pepdatetime ? unescape(curUrl.params.pepdatetime.trim()) : '';
+        var aprespnmsg = !!curUrl.params.aprespnmsg ? unescape(curUrl.params.aprespnmsg.trim()) : '';
+        var aprespn = !!curUrl.params.aprespn ? unescape(curUrl.params.aprespn.trim()) : '';
+        var termnick = !!curUrl.params.termnick ? unescape(curUrl.params.termnick.trim()) : '';
+        var intcdno = !!curUrl.params.intcdno ? unescape(curUrl.params.intcdno.trim()) : '-';
+        var primeclass = !!curUrl.params.primeclass ? unescape(curUrl.params.primeclass.trim()) : '1';
+        var trace = !!curUrl.params.trace ? unescape(curUrl.params.trace.trim()) : '-';
+
+        function getLogo(p) {
+            var ret = 'icon-yinhangqia';
+            (p & 1) == 1 ? ret = "icon-yinhangqia" : '';
+            (p & 2) == 2 ? ret = "icon-zhifubao" : '';
+            (p & 4) == 4 ? ret = "icon-weixin" : '';
+            (p & 16) == 16 ? ret = "icon-tuikuan" : '';
+            (p & 32) == 32 ? ret = "icon-erweima" : '';
+            (p & 64) == 64 ? ret = "icon-yinhangqia" : '';
+
+            return ' ' + ret;
+        }
 
 
-                $(".weui_panel div").append(html);
-                $("#title").html(text);
-                $("#title").before(icon);
-    };
-    querytoday();
+        var icon = '<i class="icon iconfont' + getLogo(primeclass) + '" style="color:#1296db;font-size:30px;padding:0 5px;margin-left:-20px;"></i>';
+
+        var html = '';
+        html += '<div class="weui-form-preview__bd"><div class="weui-form-preview__item"><label class="weui-form-preview__label" style="font-size:19px;">' + '交易金额' + '</label><span class="weui-form-preview__value" style="font-size:19px;">￥' + tradeamt + '</span></div>';
+
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '转入卡号/订单号' + '</label><span class="weui-form-preview__value">' + intcdno + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '终端号码' + '</label><span class="weui-form-preview__value">' + termcde + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易类型' + '</label><span class="weui-form-preview__value">' + tradetype + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '转出卡号' + '</label><span class="weui-form-preview__value">' + outcdno + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '交易时间' + '</label><span class="weui-form-preview__value">' + pepdatetime + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '流水号' + '</label><span class="weui-form-preview__value">' + trace + '</span></div>';
+        html += '<div class="weui-form-preview__item"><label class="weui-form-preview__label">' + '商户名称' +
+            '</label><span class="weui-form-preview__value" >' + termnick + '</span></div></div></div>';
+
+        html += '<div class="weui-form-preview__ft"><a class="cheng"><div class="weui-tabbar__icon" style="margin-right:10px;">';
+        aprespn == '00' ? html += '<i class="weui-icon-success" style="color:#09bb07;"></i></div><span style="color:#0bb20c;">' : html += '<i class="weui-icon-warn" style="color:red;"></i></div><span style="color:red;">';
+        html += aprespnmsg + '</span></a></div>';
+
+        $("#weui_panel div").append(html);
+        $("#title").html(tradetype);
+        $("#title").before(icon);
+    }();
     </script>
 </body>
 

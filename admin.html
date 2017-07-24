@@ -6,8 +6,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
-">
     <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
     <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
     <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
@@ -21,23 +19,23 @@
         z-index: 999;
         background-color: #f3f3f3;
     }
-    
+
     .weui-media-skip {
         display: block;
     }
-    
+
     .weui-media-box {
         padding: 15px 15px 0px;
     }
-    
+
     .weui-media-box__desc {
         margin-bottom: 4px;
     }
-    
+
     .weui-loadmore_line .weui-loadmore__tips {
         background-color: transparent;
     }
-    
+
     .weui-media-box__title {
         word-wrap: break-word;
         white-space: normal;
@@ -45,11 +43,11 @@
         padding-bottom: 6px;
         line-height: 25px;
     }
-    
+
     .weui-loadmore {
         margin-bottom: 65px;
     }
-    
+
     .placeholder {
         margin: 5px;
         padding: 0 10px;
@@ -58,7 +56,7 @@
         text-align: center;
         color: #000;
     }
-    
+
     h1 {
         background: #e66629;
         line-height: 37px;
@@ -67,28 +65,28 @@
         font-size: 20px;
         color: #fff;
     }
-    
-    .bodycont {
+
+    #bodycont {
         margin-top: 4px;
     }
-    
+
     .weui-flex {
         background: #fff;
         margin-bottom: 3px;
     }
-    
+
     .icon-gonggao {
         font-size: 34px;
         color: #bbb;
         margin-right: 15px;
     }
-    
+
     .xiaxian {
         font-size: 20px;
         color: #bbb;
         margin-right: 15px;
     }
-    
+
     .weui-flex {
         background: url("asset/images/y.png") no-repeat 97% 15px #fff;
     }
@@ -97,7 +95,7 @@
 
 <body>
     <h1>人员管理</h1>
-    <div style="margin-bottom:61px;" class="bodycont">
+    <div style="margin-bottom:61px;" id="bodycont">
     </div>
     <div class="weui-tabbar">
         <a class="weui-tabbar__item" href="merchant.html">
@@ -108,11 +106,11 @@
             <div class="weui-tabbar__icon"><i class="icon iconfont icon-gerenxinxi"></i></div>
             <p class="weui-tabbar__label ">个人设置</p>
         </a>
-        <a class="weui-tabbar__item weui-bar__item--on">
+        <a class="weui-tabbar__item weui-bar__item--on" id="admin_page" style="display:none">
             <div class="weui-tabbar__icon"><i class="icon iconfont icon-guanli lanse-color"></i></div>
             <p class="weui-tabbar__label">人员管理</p>
         </a>
-        <a class="weui-tabbar__item" href="changepwd.html" id="pwd_page">
+        <a class="weui-tabbar__item weui-bar__item--on" id="pwd_page" href="changepwd.html" style="display:none">
             <div class="weui-tabbar__icon"><i class="icon iconfont icon-xiugai"></i></div>
             <p class="weui-tabbar__label ">修改密码</p>
         </a>
@@ -120,83 +118,81 @@
     <div id="totop"><img src="asset/images/totop.png"></div>
     <script src="asset/dist/js/jquery-weui.js"></script>
     <script>
-    var curUrl = parseURL(window.location.href);
-    var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
-    var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
-    var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
-    // && !!curRole && !!curRole.trim()
+    ! function() {
+        var curUrl = parseURL(window.location.href);
+        var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+        var curWxName = !!curUrl.params.wxname ? unescape(curUrl.params.wxname.trim()) : '';
+        var curRole = !!curUrl.params.role ? curUrl.params.role.trim() : '';
 
-    if (!!curWxNo && !!curRole) {
-        sessionStorage.setItem("wxno", curWxNo);
-        sessionStorage.setItem("wxname", curWxName);
-        sessionStorage.setItem("role", curRole);
-    } else {
-        curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
-        curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
-        curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
+        if (!!curWxNo && !!curRole) {
+            sessionStorage.setItem("wxno", curWxNo);
+            sessionStorage.setItem("wxname", curWxName);
+            sessionStorage.setItem("role", curRole);
+        } else {
+            curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+            curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+            curRole = !!sessionStorage.getItem("role") ? sessionStorage.getItem("role").trim() : '';
 
-        // double check
-        if (!curWxNo || !curRole) {
-            $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
-        }
-    }
-
-    curRole =='b' ? $('#pwd_page').css('display', 'none') : '';
-
-    if (curRole == 'c') {
-        window.close();
-    }
-    
-    var act = appServer + '/admin/list';
-    $.ajax({
-        type: 'GET',
-        url: act,
-        cache: false,
-        data: {
-            "wxno": curWxNo
-        },
-        dataType: 'json',
-        success: function(resp) {
-            if (resp.respcode == '00') {
-                var len = resp.users.length;
-                var html = '';
-                for (var i = 0; i < len; i++) {
-                	var name = !! resp.users[i].name ? resp.users[i].name : '未设置';
-                	var mobile = !! resp.users[i].mobile ? resp.users[i].mobile : '';
-                	var createdt = resp.users[i].createdt;
-                	var notify_flag = resp.users[i].notify_flag;
-                	var user_role = resp.users[i].user_role;
-
-                	html += ('<a href="userdetail.html?name=' +  escape(name)+  '&mobile=' + mobile + '&createdt=' + createdt + '&notify_flag=' + notify_flag + '&user_role=' + user_role + '">');
-                	html += '<div class="weui-flex"><div class="weui-flex__item"><div class="placeholder role">';
-                    // 人员角色
-                    if (user_role == 1) {
-                        html += '老板';
-                    } else if (user_role == 2) {
-                        html += '店长';
-                    } else {
-                        html += '店员';
-                    }
-                    html += '</div></div>';
-
-                    html += '<div class="weui-flex__item"><div class="placeholder name">' + name + '</div></div>';
-
-                    // 消息图标
-                    if (notify_flag== 1) {
-                        html += '<div class="weui-flex__item"><div class="placeholder"><i class="icon iconfont icon-gonggao" style="color:#05ea15;"></i></div></div></div></a>';
-                    } else {
-                        html += '<div class="weui-flex__item"><div class="placeholder"><i class="icon iconfont icon-gonggao"></i></div></div></div></a>';
-                    }
-                }
-                $(".bodycont").append(html);
-            } else {
-                $.toptip('数据加载错误', 'error');
+            if (!curWxNo || !curRole) {
+                $.toptip('异常访问,请在微信公众号内访问该网页', 'error');
+                return;
             }
-        },
-        error: function() {
-            $.toptip('网络连接失败', 'error');
         }
-    });
+
+        curRole == 'b' ? $('#admin_page').css('display', 'block') : '';
+        curRole == 'a' ? $('#admin_page').css('display', 'block') && $('#pwd_page').css('display', 'block') : '';
+
+        var act = appServer + '/admin/list';
+        $.ajax({
+            type: 'GET',
+            url: act,
+            cache: false,
+            data: {
+                "wxno": curWxNo
+            },
+            dataType: 'json',
+            success: function(resp) {
+                if (resp.respcode == '00') {
+                    var len = resp.users.length;
+                    var html = '';
+                    for (var i = 0; i < len; i++) {
+                        var name = !!resp.users[i].name ? resp.users[i].name : '未设置';
+                        var mobile = !!resp.users[i].mobile ? resp.users[i].mobile : '';
+                        var createdt = resp.users[i].createdt;
+                        var notify_flag = resp.users[i].notify_flag;
+                        var user_role = resp.users[i].user_role;
+
+                        html += ('<a href="userdetail.html?name=' + escape(name) + '&mobile=' + mobile + '&createdt=' + createdt + '&notify_flag=' + notify_flag + '&user_role=' + user_role + '">');
+                        html += '<div class="weui-flex"><div class="weui-flex__item"><div class="placeholder role">';
+                        // 人员角色
+                        if (user_role == 1) {
+                            html += '老板';
+                        } else if (user_role == 2) {
+                            html += '店长';
+                        } else {
+                            html += '店员';
+                        }
+                        html += '</div></div>';
+
+                        html += '<div class="weui-flex__item"><div class="placeholder name">' + name + '</div></div>';
+
+                        // 消息图标
+                        if (notify_flag == 1) {
+                            html += '<div class="weui-flex__item"><div class="placeholder"><i class="icon iconfont icon-gonggao" style="color:#05ea15;"></i></div></div></div></a>';
+                        } else {
+                            html += '<div class="weui-flex__item"><div class="placeholder"><i class="icon iconfont icon-gonggao"></i></div></div></div></a>';
+                        }
+                    }
+                    $("#bodycont").append(html);
+                } else {
+                    $.toptip('数据加载错误', 'error');
+                }
+            },
+            error: function() {
+                $.toptip('网络连接失败', 'error');
+            }
+        });
+    }();
 
     // 回到顶部
     $(window).scroll(function() {

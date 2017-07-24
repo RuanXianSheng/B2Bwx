@@ -40,7 +40,10 @@ body {
 
 /*筛选样式*/
 .bt-screen {
-  float: right;
+  /*float: right;*/
+  position:absolute;
+  top:0;
+  right:15px;
   color: #fff;
   display: flex;
   display: -webkit-flex;

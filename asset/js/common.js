@@ -1,16 +1,35 @@
 var appServer = 'http://180.168.215.71/b2bwx';
 //var appServer = 'http://localhost:2888';
 
-//获取url参数
-function getRequests(key) {
-    var url = window.location.search.split("?"); //获取url中"?"符后的字串  
-    var qd = {};
-    if (url[1]) {
-        unescape(url[1]).split("&").forEach(function(item) {
-            (item.split("=")[0] in qd) ? qd[item.split("=")[0]].push(item.split("=")[1]): qd[item.split("=")[0]] = [item.split("=")[1]]
-        });
-        return qd[key];
+Date.prototype.format = function(format) {
+    var date = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S+": this.getMilliseconds()
+    };
+    if (/(y+)/i.test(format)) {
+        format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
     }
+    for (var k in date) {
+        if (new RegExp("(" + k + ")").test(format)) {
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+        }
+    }
+    return format;
+}
+
+String.prototype.replaceAll = function(s1, s2) {
+    return this.replace(new RegExp(s1, "gm"), s2);
+}
+
+// 0.00
+String.prototype.formatAmount = function(tpl){
+    
 }
 
 function  formatTime (time) {
@@ -49,7 +68,7 @@ function parseURL(url) {
      for (;i<len;i++) {  
          if (!seg[i]) { continue; }  
          s = seg[i].split('=');  
-         ret[s[0]] = s[1];  
+         ret[s[0]] = s[1]; 
      }  
      return ret;  
  })(),  
@@ -60,3 +79,20 @@ function parseURL(url) {
  segments: a.pathname.replace(/^\//,'').split('/')  
  };  
 }   
+
+// 金额补零
+function fillzero(value) {
+    var value = Math.round(parseFloat(value) * 100) / 100;
+    var xsd = value.toString().split(".");
+    if (xsd.length == 1) {
+        value = value.toString() + ".00";
+        return value;
+    }
+    if (xsd.length > 1) {
+        if (xsd[1].length < 2) {
+            value = value.toString() + "0";
+        }
+        return value;
+    }
+}
+

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>分享</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+    <link rel="stylesheet" href="asset/dist/lib/weui.min.css">
+    <link rel="stylesheet" href="asset/dist/css/jquery-weui.css">
+
+    <link rel="stylesheet" href="asset/dist/fonts/iconfont.css">
+    <link rel="stylesheet" href="asset/css/reset.css">
+    <script src="asset/dist/lib/zepto.js"></script>
+    <script src="asset/js/updown.js"></script>
+    <script src="asset/js/lazyimg.js"></script>
+    <script src="asset/js/common.js"></script>
+    <style type="text/css">
+    body {
+        background:#fff;
+    }
+    .weui-search-bar {
+        z-index: 999;
+        background-color: #f3f3f3;
+    }
+    .weui-media-skip {
+        display: block;
+    }
+    .weui-media-box {
+        padding:15px 15px 0px;
+    }
+    .weui-media-box__desc {
+        margin-bottom:4px;
+    }
+    .weui-loadmore_line .weui-loadmore__tips {
+        background-color:transparent;
+    }
+    .weui-media-box__title {
+        word-wrap:break-word;
+        white-space:normal;
+        font-size:15px;
+        padding-bottom:6px;
+        line-height:25px;
+    }
+    .weui-loadmore {
+        margin-bottom:65px;
+    }
+    .placeholder {
+        margin: 5px;
+        padding: 0 10px;
+        height: 2.3em;
+        line-height: 2.3em;
+        text-align: center;
+        color: #000;
+      }
+    .weui-article p {
+        margin:0 auto;
+    }
+    .code {
+        text-align:center;
+    }
+    .address a {
+        display:inline-block;
+        /*margin:10px 0px 10px 57px;*/
+    }
+    .address , .describe {
+        /*width:330px;*/
+        line-height:35px;
+    }
+    .describe {
+         padding-left:3px;
+         padding-top:15px;
+    }
+    .weui-article {
+        padding:0px 15px;
+    }
+     h1 {
+        background: #e66629;
+        height:37px;
+        line-height: 37px;
+        text-align: center;
+        position:relative;
+        margin-bottom:0px;
+        font-size:20px;
+        color:#fff;
+    }
+    h1 .icon-fanhui {
+        position:absolute;
+        left:15px;
+        color:#fff;
+    }
+    </style>
+</head>
+
+<body>
+        <h1 class="shopname"><a href="merchant.html"><i class="icon iconfont icon-fanhui"></i></a></h1>
+    <article class="weui-article">
+        <section>
+          <p class="code">
+            <img src="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQEC8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyQmZFSkVPQS1jVTQxc3huS05wY04AAgShnGVZAwSAOgkA" style="width:250;height:250px;"/>
+          </p>
+          <p class="address"><a style="color:green;" href="http://weixin.qq.com/q/02BfEJEOA-cU41sxnKNpcN">http://weixin.qq.com/q/02BfEJEOA-cU41sxnKNpcN</a></p>
+          <p class="describe"><!-- 请向您的店员展示二维码或点击右上角进行分享,长按二维码或打开链接进行绑定. -->
+              请先让您的员工关注微信公众号"华势科技", 再扫描该二维码或打开链接进行绑定.
+          </p>
+        </section>
+    </article>
+    <div id="totop"><img src="asset/images/totop.png"></div>
+    <script src="asset/dist/lib/fastclick.js"></script>
+    <script src="asset/dist/js/jquery-weui.js"></script>
+    <script type="text/javascript">
+        var shopname = getRequests("shopname") ? getRequests("shopname")[0] : "";
+        $(".shopname").append(shopname);
+        // 添加菜单栏
+        var curUrl = parseURL(window.location.href);
+        var curWxNo = !!curUrl.params.wxno ? curUrl.params.wxno.trim() : '';
+        var curWxName = !!curUrl.params.wxname ? curUrl.params.wxname.trim() : '';
+
+        if (!!curWxNo && !!curRole) {
+            sessionStorage.setItem("wxno", curWxNo);
+            sessionStorage.setItem("wxname", curWxName);
+        } else {
+            curWxNo = !!sessionStorage.getItem("wxno") ? sessionStorage.getItem("wxno").trim() : '';
+            curWxName = !!sessionStorage.getItem("wxname") ? sessionStorage.getItem("wxname").trim() : '';
+            
+        }
+
+        var shopid = getRequests("shopid");        
+        var act = appServer + '/share/getinfo';
+        $.ajax({
+            url: act,
+            type: "get",
+            traditional: true,
+            cache: false,
+            data: {
+                "shopid":shopid,
+                "wxno":curWxNo
+            },
+            beforeSend: function() {
+            },
+            success: function(resp) {
+                return;
+                if (resp.respcode == '00') {
+                    // var arr = (resp.url).split("?")[0];
+                    // var url = (resp.url).split("?")[1];
+                    // var src_wxno = unescape(url).split("&")[1].split("=")[1];
+                    // $(".address").click(function(){
+                    //     var arr = "bind.html?" +"&shopid=" + shopid  +"&shopname=" + escape(shopname) + "&wxno=" + curWxNo + "&wxname=" + curWxName + "&src_wxno=" + src_wxno;
+                    //     window.location.href = arr;
+                    // })
+                    $(".address a").attr('href', resp.url);
+                   $(".address a").html(resp.url);
+                }else if (resp.respcode == '02') {
+                    $.toast.prototype.defaults.duration = 500000000;
+                    $.toast(resp.respmsg,"forbidden");
+                }else {
+                     $.toptip(resp.respmsg, 'error');
+                    return false;
+                }
+            },
+            error: function(xhr, type) {
+                 $.toptip('网络连接失败', 'error');
+            }
+        })
+    </script>
+</body>
+
+</html>
